@@ -1,0 +1,40 @@
+# Environment & secrets (CRITICAL: never commit real credentials)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Documentation & Markdown files
+*.md
+**/*.md
+docs/
+
+# Tests & test utilities
+tests/
+coverage/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Scripts & Database seeds
+src/server/seed/
+scripts/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

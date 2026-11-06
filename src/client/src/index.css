@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode (toggled on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Brand design tokens (Tailwind v4 @theme).
+ * Light-mode values live here; dark-mode overrides are applied via the
+ * `.dark` class below. Utilities resolve through CSS variables, so every
+ * `bg-*` / `text-*` / `border-*` class adapts automatically.
+ */
+@theme {
+  --color-gold: #a07434;
+  --color-gold-dark: #7a5622;
+  --color-gold-light: #c99a52;
+  --color-cream: #faf7f2;
+  --color-cream-card: #fffdf9;
+  --color-ink: #1c1a17;
+  --color-ink-light: #f3ede2;
+  --color-line: #e4dbcb;
+  --color-daraa-blue: #b8c2dc;
+
+  /* Thmanyah (خط ثمانية) — https://font.thmanyah.com */
+  --font-sans: 'Thmanyah Sans', system-ui, sans-serif;
+  --font-serif: 'Thmanyah Serif Display', 'Thmanyah Serif Text', serif;
+  --font-display: 'Thmanyah Serif Display', serif;
+  --font-text: 'Thmanyah Serif Text', serif;
+
+  /* Brand shape + motion */
+  --radius-brand: 2px;
+}
+
+.dark {
+  --color-gold: #c99a52;
+  --color-gold-dark: #a07434;
+  --color-gold-light: #d9b070;
+  --color-cream: #17140f;
+  --color-cream-card: #201c15;
+  --color-ink: #f3ede2;
+  --color-ink-light: #f3ede2;
+  --color-line: #3a3226;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    color: var(--color-ink);
+    background-color: var(--color-cream);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    line-height: 1.25;
+  }
+
+  p,
+  article {
+    font-family: var(--font-text);
+  }
+}
