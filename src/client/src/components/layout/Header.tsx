@@ -2,12 +2,15 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import type { MessageKey } from '../../i18n/dictionary'
 import { useApp } from '../../app/useApp'
+import { useAuth } from '../../app/useAuth'
 import { useCart } from '../../app/useCart'
 import { useCategories } from '../../app/useCategories'
 import { pickText } from '../../lib/localized'
+import { hasRoleAtLeast } from '@shared/constants/roles'
 import { Wordmark } from '../brand/Wordmark'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 import { ThemeToggle } from '../ui/ThemeToggle'
+import { AuthModal } from '../auth/AuthModal'
 
 interface NavItem {
   to: string
@@ -22,9 +25,12 @@ const BASE_LINKS: { to: string; key: MessageKey; end?: boolean }[] = [
 
 export function Header() {
   const { t, locale } = useApp()
+  const { user, logout } = useAuth()
   const { count } = useCart()
   const categories = useCategories()
   const [open, setOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
 
   // Show top-level categories in primary navigation to keep header balanced
   const rootCategories = categories.filter((cat) => !cat.parent)
@@ -61,6 +67,82 @@ export function Header() {
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
           <ThemeToggle />
+
+          {/* User Account / Auth Button */}
+          {user ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setAccountMenuOpen((v) => !v)}
+                className="flex items-center gap-2 rounded-brand border border-line px-3 py-1.5 font-sans text-xs uppercase tracking-[0.1em] text-ink/80 transition-colors hover:border-gold hover:text-gold"
+                aria-label={t('auth.account')}
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span className="hidden max-w-[100px] truncate sm:inline">{user.name.split(' ')[0]}</span>
+              </button>
+
+              {accountMenuOpen && (
+                <div
+                  className="absolute end-0 mt-2 w-48 rounded-brand border border-line bg-cream-card p-2 shadow-xl z-50"
+                  onClick={() => setAccountMenuOpen(false)}
+                >
+                  <div className="border-b border-line px-3 py-2">
+                    <p className="font-sans text-xs font-bold text-ink truncate">{user.name}</p>
+                    <p className="font-sans text-[11px] text-ink/50 truncate">{user.email}</p>
+                  </div>
+                  {hasRoleAtLeast(user.role, 'admin') && (
+                    <Link
+                      to="/admin"
+                      className="block rounded px-3 py-2 text-xs font-sans text-gold hover:bg-cream"
+                    >
+                      {t('auth.adminPanel')} →
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="w-full text-start rounded px-3 py-2 text-xs font-sans text-red-500 hover:bg-cream"
+                  >
+                    {t('auth.signOut')}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAuthOpen(true)}
+              className="flex items-center gap-1.5 rounded-brand border border-line px-3 py-1.5 font-sans text-xs uppercase tracking-[0.1em] text-ink/80 transition-colors hover:border-gold hover:text-gold"
+              aria-label={t('auth.signIn')}
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span className="hidden sm:inline">{t('auth.signIn')}</span>
+            </button>
+          )}
 
           <Link
             to="/cart"
@@ -134,9 +216,40 @@ export function Header() {
                 {item.label}
               </NavLink>
             ))}
+
+            <div className="border-t border-line/60 py-3">
+              {user ? (
+                <div className="flex items-center justify-between">
+                  <span className="font-sans text-xs text-ink">{user.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false)
+                      logout()
+                    }}
+                    className="font-sans text-xs text-red-500 hover:underline"
+                  >
+                    {t('auth.signOut')}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false)
+                    setAuthOpen(true)
+                  }}
+                  className="font-sans text-sm uppercase tracking-[0.15em] text-gold"
+                >
+                  {t('auth.signIn')} / {t('auth.signUp')}
+                </button>
+              )}
+            </div>
           </div>
         </nav>
       )}
+
+      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
     </header>
   )
 }

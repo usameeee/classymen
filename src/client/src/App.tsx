@@ -12,6 +12,7 @@ const CatalogPage = lazy(() => import('./pages/CatalogPage').then((m) => ({ defa
 const CategoryPage = lazy(() => import('./pages/CategoryPage').then((m) => ({ default: m.CategoryPage })))
 const ProductPage = lazy(() => import('./pages/ProductPage').then((m) => ({ default: m.ProductPage })))
 const CartPage = lazy(() => import('./pages/CartPage').then((m) => ({ default: m.CartPage })))
+const AuthPage = lazy(() => import('./pages/AuthPage').then((m) => ({ default: m.AuthPage })))
 
 // Lazy-loaded Admin pages
 const LoginPage = lazy(() => import('./pages/admin/LoginPage').then((m) => ({ default: m.LoginPage })))
@@ -47,6 +48,8 @@ function App() {
                   <Route path="category/:slug" element={<CategoryPage />} />
                   <Route path="product/:slug" element={<ProductPage />} />
                   <Route path="cart" element={<CartPage />} />
+                  <Route path="login" element={<AuthPage />} />
+                  <Route path="signup" element={<AuthPage />} />
                 </Route>
 
                 <Route path="/admin/login" element={<LoginPage />} />

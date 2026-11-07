@@ -9,11 +9,15 @@ const API_BASE = import.meta.env.VITE_API_URL ?? '/api'
 /** Error carrying the HTTP status, mirroring the server's error contract. */
 export class ApiError extends Error {
   readonly status: number
+  readonly code?: string
+  readonly email?: string
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, code?: string, email?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.code = code
+    this.email = email
   }
 }
 
@@ -52,7 +56,11 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     }
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  const normalizedPath = path.startsWith('/api/')
+    ? path
+    : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`
+
+  const response = await fetch(normalizedPath, {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
@@ -65,11 +73,11 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   const payload: unknown = await response.json().catch(() => null)
 
   if (!response.ok) {
-    const message =
-      payload && typeof payload === 'object' && 'error' in payload
-        ? String((payload as { error: unknown }).error)
-        : `Request failed with status ${response.status}.`
-    throw new ApiError(response.status, message)
+    const errorObj = payload && typeof payload === 'object' ? (payload as Record<string, unknown>) : null
+    const message = errorObj && 'error' in errorObj ? String(errorObj.error) : `Request failed with status ${response.status}.`
+    const code = errorObj && 'code' in errorObj ? String(errorObj.code) : undefined
+    const email = errorObj && 'email' in errorObj ? String(errorObj.email) : undefined
+    throw new ApiError(response.status, message, code, email)
   }
 
   return payload as T

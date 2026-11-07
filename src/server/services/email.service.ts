@@ -151,3 +151,116 @@ export async function sendOrderConfirmation(data: OrderEmailData): Promise<void>
   }
 }
 
+interface OtpEmailData {
+  to: string;
+  name: string;
+  code: string;
+  type: 'verify' | 'reset';
+  locale?: Locale;
+}
+
+const OTP_TEXTS: Record<Locale, {
+  verifySubject: string;
+  resetSubject: string;
+  verifyGreeting: string;
+  resetGreeting: string;
+  verifyIntro: string;
+  resetIntro: string;
+  codeLabel: string;
+  validNotice: string;
+  ignoreNotice: string;
+}> = {
+  ar: {
+    verifySubject: 'رمز تفعيل حسابك — Classy Men Rim',
+    resetSubject: 'رمز إعادة تعيين كلمة المرور — Classy Men Rim',
+    verifyGreeting: 'أهلاً بك',
+    resetGreeting: 'مرحباً',
+    verifyIntro: 'شكراً لانضمامك إلى Classy Men Rim. استخدم الرمز التالي لتفعيل حسابك:',
+    resetIntro: 'تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك. استخدم الرمز التالي للمتابعة:',
+    codeLabel: 'رمز التحقق (OTP)',
+    validNotice: 'هذا الرمز صالح لمدة 15 دقيقة فقط.',
+    ignoreNotice: 'إذا لم تطلب هذا الرمز، يمكنك تجاهل هذه الرسالة بأمان.',
+  },
+  fr: {
+    verifySubject: 'Votre code de vérification — Classy Men Rim',
+    resetSubject: 'Réinitialisation de mot de passe — Classy Men Rim',
+    verifyGreeting: 'Bienvenue',
+    resetGreeting: 'Bonjour',
+    verifyIntro: 'Merci de rejoindre Classy Men Rim. Veuillez utiliser le code ci-dessous pour vérifier votre compte :',
+    resetIntro: 'Nous avons reçu une demande de réinitialisation de votre mot de passe. Voici votre code :',
+    codeLabel: 'Code de confirmation (OTP)',
+    validNotice: 'Ce code est valide pendant 15 minutes.',
+    ignoreNotice: 'Si vous n’avez pas effectué cette demande, vous pouvez ignorer cet email en toute sécurité.',
+  },
+  en: {
+    verifySubject: 'Your Verification Code — Classy Men Rim',
+    resetSubject: 'Password Reset Code — Classy Men Rim',
+    verifyGreeting: 'Welcome',
+    resetGreeting: 'Hello',
+    verifyIntro: 'Thank you for joining Classy Men Rim. Please use the following code to activate your account:',
+    resetIntro: 'We received a request to reset your password. Please use the following code to proceed:',
+    codeLabel: 'Verification Code (OTP)',
+    validNotice: 'This code is valid for 15 minutes only.',
+    ignoreNotice: 'If you did not make this request, please safely disregard this email.',
+  },
+};
+
+/** Sends an OTP email for account verification or password reset. */
+export async function sendOtpEmail(data: OtpEmailData): Promise<void> {
+  const transport = createTransport();
+  const locale = data.locale ?? DEFAULT_LOCALE;
+  const T = OTP_TEXTS[locale] ?? OTP_TEXTS.en;
+
+  const isVerify = data.type === 'verify';
+  const subject = isVerify ? T.verifySubject : T.resetSubject;
+  const greeting = isVerify ? T.verifyGreeting : T.resetGreeting;
+  const intro = isVerify ? T.verifyIntro : T.resetIntro;
+
+  const html = `<!DOCTYPE html>
+<html lang="${locale}" dir="${locale === 'ar' ? 'rtl' : 'ltr'}">
+<head><meta charset="UTF-8"/><title>${subject}</title></head>
+<body style="margin:0;padding:0;background:#f7f4ef;font-family:'Segoe UI',sans-serif;color:#1a1611">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 16px">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e8e0d0">
+  <tr><td style="background:#1a1611;padding:26px 32px;text-align:center">
+    <span style="font-size:20px;font-weight:700;letter-spacing:0.25em;color:#b8973e">CLASSY MEN RIM</span>
+  </td></tr>
+  <tr><td style="padding:32px">
+    <p style="margin:0 0 10px;font-size:16px">${greeting} <strong>${data.name}</strong>,</p>
+    <p style="margin:0 0 24px;color:#555;font-size:14px;line-height:1.5">${intro}</p>
+    
+    <div style="background:#f7f4ef;border:1px solid #e8e0d0;border-radius:6px;padding:20px;text-align:center;margin:0 0 24px">
+      <span style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:#888;margin-bottom:8px">${T.codeLabel}</span>
+      <span style="font-size:32px;font-weight:700;letter-spacing:0.25em;color:#b8973e;font-family:monospace">${data.code}</span>
+    </div>
+
+    <p style="margin:0 0 8px;font-size:13px;color:#777">${T.validNotice}</p>
+    <p style="margin:0;font-size:12px;color:#999">${T.ignoreNotice}</p>
+  </td></tr>
+  <tr><td style="background:#f7f4ef;padding:16px 32px;text-align:center;font-size:12px;color:#999">
+    Classy Men Rim — Nouakchott, Mauritania
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
+
+  // Always log OTP to console in dev mode so developer/tester can see it immediately
+  console.log(`[OTP] Sent to ${data.to} (${data.type}): ${data.code}`);
+
+  if (!transport) {
+    console.log('[email] SMTP transport not configured; skipping email dispatch.');
+    return;
+  }
+
+  try {
+    await transport.sendMail({
+      from: `"Classy Men Rim" <${process.env.MAIL_USER}>`,
+      to: data.to,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error('[email] Failed to send OTP email:', err);
+  }
+}
+

@@ -5,6 +5,8 @@ import { useAuth } from '../../app/useAuth'
 import { ApiError } from '../../lib/api'
 import { Wordmark } from '../../components/brand/Wordmark'
 
+import { hasRoleAtLeast } from '@shared/constants/roles'
+
 export function LoginPage() {
   const { user, ready, login } = useAuth()
   const navigate = useNavigate()
@@ -18,7 +20,10 @@ export function LoginPage() {
   const from = (location.state as { from?: string } | null)?.from ?? '/admin'
 
   if (ready && user) {
-    return <Navigate to={from} replace />
+    if (hasRoleAtLeast(user.role, 'admin')) {
+      return <Navigate to={from} replace />
+    }
+    return <Navigate to="/" replace />
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
