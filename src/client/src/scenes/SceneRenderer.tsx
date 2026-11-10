@@ -24,6 +24,9 @@ const ShelfScene = lazy(() =>
 const WardrobeScene = lazy(() =>
   import('./WardrobeScene').then((m) => ({ default: m.WardrobeScene })),
 )
+const Stage3dScene = lazy(() =>
+  import('./Stage3dScene').then((m) => ({ default: m.Stage3dScene })),
+)
 
 /**
  * Registry of implemented display styles.
@@ -31,6 +34,7 @@ const WardrobeScene = lazy(() =>
  * fall back to the clean grid.
  */
 const SCENES: Record<DisplayStyle, ComponentType<SceneProps>> = {
+  'stage-3d': Stage3dScene,
   cabinet: CabinetScene,
   floating: FloatingScene,
   mannequin: MannequinScene,

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useApp } from '../../app/useApp'
 import {
   DEFAULT_DISPLAY_STYLE,
   DISPLAY_STYLES,
-  DISPLAY_STYLE_LABELS,
+  getDisplayStyleLabel,
 } from '@shared/constants/displayStyles'
 import type { DisplayStyle } from '@shared/constants/displayStyles'
 import { Checkbox, Field, NumberInput, Select, inputClass } from '../../components/admin/form'
@@ -15,6 +16,7 @@ import type { Category, CategoryPayload, LocalizedText, ProductImageAsset } from
 const emptyText = (): LocalizedText => ({ ar: '', fr: '', en: '' })
 
 export function CategoryFormPage() {
+  const { locale } = useApp()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const isEdit = Boolean(id)
@@ -149,7 +151,7 @@ export function CategoryFormPage() {
               onChange={(value) => setDisplayStyle(value as DisplayStyle)}
               options={DISPLAY_STYLES.map((style) => ({
                 value: style,
-                label: DISPLAY_STYLE_LABELS[style],
+                label: getDisplayStyleLabel(style, locale),
               }))}
             />
           </Field>

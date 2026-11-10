@@ -115,7 +115,7 @@ export function DressingRoomModal({ onClose }: DressingRoomModalProps) {
     scent: t('dressing.scent'),
   }
 
-  const slotIcon: Record<Slot, string> = { top: '👘', shoes: '👞', scent: '🌹' }
+  const slotIcon: Record<Slot, string> = { top: 'I', shoes: 'II', scent: 'III' }
 
   return (
     <AnimatePresence>
@@ -169,7 +169,7 @@ export function DressingRoomModal({ onClose }: DressingRoomModalProps) {
                         : 'text-ink/50 hover:text-ink'
                     }`}
                   >
-                    <span className="text-lg">{slotIcon[slot]}</span>
+                    <span className="font-serif text-xs font-bold text-gold">{slotIcon[slot]}</span>
                     <span>{slotLabel[slot]}</span>
                     {selected[slot] && (
                       <span className="h-1.5 w-1.5 rounded-full bg-gold" />
@@ -256,7 +256,7 @@ export function DressingRoomModal({ onClose }: DressingRoomModalProps) {
                   return (
                     <div key={slot} className="flex flex-col gap-1">
                       <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-ink/40">
-                        {slotIcon[slot]} {slotLabel[slot]}
+                        {slotLabel[slot]}
                       </span>
                       {pick ? (
                         <div className="group relative flex items-center gap-2 rounded-brand border border-gold p-2">

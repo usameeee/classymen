@@ -52,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(session.token)
     setTokenState(session.token)
     setUser(session.user)
+    return session.user
   }, [])
 
   const signup = useCallback(async (data: SignupData) => {

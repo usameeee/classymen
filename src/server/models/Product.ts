@@ -25,6 +25,7 @@ const productSchema = new Schema(
     isMadeToMeasure: { type: Boolean, default: false },
     stock: { type: Number, default: 0, min: 0 },
     displayStyle: { type: String, enum: [...DISPLAY_STYLES] },
+    wardrobeSection: { type: String, enum: ['hanging', 'folded', 'bottom'], default: 'hanging' },
     tags: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
     isFeatured: { type: Boolean, default: false },

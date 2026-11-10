@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { useApp } from '../app/useApp'
 import { useCart } from '../app/useCart'
+import { useToast } from '../app/useToast'
 import { formatPrice, primaryImage } from '../components/catalog/ProductCard'
 import { SizingAssistantModal } from '../components/sizing/SizingAssistantModal'
 import { fetchProduct } from '../lib/catalog'
@@ -14,6 +15,7 @@ export function ProductPage() {
   const { slug = '' } = useParams<{ slug: string }>()
   const { t, locale } = useApp()
   const { add } = useCart()
+  const { success: toastSuccess } = useToast()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -66,6 +68,11 @@ export function ProductPage() {
       1,
     )
     setAdded(true)
+    toastSuccess(
+      t('product.added'),
+      pickText(product.name, locale),
+      3000,
+    )
   }
 
   if (loading) {

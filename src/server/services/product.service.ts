@@ -46,8 +46,13 @@ export async function listProducts(query: ProductQuery, includeInactive = false)
     filter.isFeatured = query.featured;
   }
   if (query.category) {
-    const categoryIds = await resolveCategoryAndDescendantIds(query.category);
-    filter.category = categoryIds.length === 1 ? categoryIds[0] : { $in: categoryIds };
+    if (query.direct) {
+      const primaryId = await resolveCategoryId(query.category);
+      filter.category = primaryId;
+    } else {
+      const categoryIds = await resolveCategoryAndDescendantIds(query.category);
+      filter.category = categoryIds.length === 1 ? categoryIds[0] : { $in: categoryIds };
+    }
   }
 
   const [total, items] = await Promise.all([

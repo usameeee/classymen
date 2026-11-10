@@ -1,5 +1,6 @@
 import { Schema, model, type InferSchemaType } from 'mongoose';
 import { DEFAULT_DISPLAY_STYLE, DISPLAY_STYLES } from '@shared/constants/displayStyles';
+import { DEFAULT_SHOWCASE_STYLE, SHOWCASE_STYLES } from '@shared/constants/showcaseStyles';
 import { emptyLocalizedString, localizedStringSchema } from './localized';
 import { imageSchema } from './image';
 
@@ -13,6 +14,15 @@ const categorySchema = new Schema(
       type: String,
       enum: [...DISPLAY_STYLES],
       default: DEFAULT_DISPLAY_STYLE,
+    },
+    showcaseOnHome: {
+      type: Boolean,
+      default: false,
+    },
+    showcaseStyle: {
+      type: String,
+      enum: [...SHOWCASE_STYLES],
+      default: DEFAULT_SHOWCASE_STYLE,
     },
     parent: {
       type: Schema.Types.ObjectId,

@@ -3,6 +3,7 @@
  * Mirrors the response shapes of `src/server/routes/{category,product}.routes.ts`.
  */
 import type { DisplayStyle } from '@shared/constants/displayStyles'
+import type { ShowcaseStyle } from '@shared/constants/showcaseStyles'
 import type { ImageStatus, ProductImageRole } from '@shared/constants/catalog'
 import { apiRequest } from './api'
 
@@ -39,6 +40,8 @@ export interface CategorySummary {
 
 export interface Category extends CategorySummary {
   description: LocalizedText
+  showcaseOnHome?: boolean
+  showcaseStyle?: ShowcaseStyle
   parent?: CategoryParentSummary | null
   image?: ImageAsset
   order: number
@@ -61,6 +64,7 @@ export interface Product {
   isMadeToMeasure: boolean
   stock: number
   displayStyle?: DisplayStyle
+  wardrobeSection?: 'hanging' | 'folded' | 'bottom'
   tags: string[]
   isActive: boolean
   isFeatured: boolean
@@ -81,6 +85,8 @@ export interface CategoryPayload {
   name: LocalizedText
   description?: LocalizedText
   displayStyle?: DisplayStyle
+  showcaseOnHome?: boolean
+  showcaseStyle?: ShowcaseStyle
   parentId?: string | null
   image?: ImageAsset
   order?: number
@@ -100,6 +106,7 @@ export interface ProductPayload {
   isMadeToMeasure?: boolean
   stock?: number
   displayStyle?: DisplayStyle
+  wardrobeSection?: 'hanging' | 'folded' | 'bottom'
   tags?: string[]
   isActive?: boolean
   isFeatured?: boolean
@@ -108,6 +115,7 @@ export interface ProductPayload {
 export interface ProductListParams {
   category?: string
   featured?: boolean
+  direct?: boolean
   page?: number
   limit?: number
   /** Include hidden products (admin only; ignored for anonymous requests). */
@@ -171,11 +179,13 @@ export async function deleteCategory(id: string): Promise<void> {
 
 export async function fetchProducts(params: ProductListParams = {}): Promise<ProductPage> {
   const search = new URLSearchParams()
-  if (params.includeInactive ?? true) {
+  // Only send includeInactive=true when explicitly requested (admin-only flag)
+  if (params.includeInactive === true) {
     search.set('includeInactive', 'true')
   }
   if (params.category) search.set('category', params.category)
   if (params.featured !== undefined) search.set('featured', String(params.featured))
+  if (params.direct !== undefined) search.set('direct', String(params.direct))
   search.set('page', String(params.page ?? 1))
   search.set('limit', String(params.limit ?? 20))
   return apiRequest<ProductPage>(`/products?${search.toString()}`)
@@ -214,13 +224,18 @@ interface UploadSignature {
   folder: string
   timestamp: number
   signature: string
+  removeBackground?: boolean
 }
 
 /** Uploads a file straight to Cloudinary using a server-signed payload. */
-export async function uploadImage(file: File, folder: string): Promise<ImageAsset> {
+export async function uploadImage(
+  file: File,
+  folder: string,
+  options: { removeBackground?: boolean } = {},
+): Promise<ImageAsset> {
   const signature = await apiRequest<UploadSignature>('/uploads/signature', {
     method: 'POST',
-    body: { folder },
+    body: { folder, removeBackground: options.removeBackground ?? false },
   })
 
   const form = new FormData()
@@ -229,6 +244,10 @@ export async function uploadImage(file: File, folder: string): Promise<ImageAsse
   form.append('timestamp', String(signature.timestamp))
   form.append('folder', signature.folder)
   form.append('signature', signature.signature)
+
+  if (signature.removeBackground) {
+    form.append('background_removal', 'cloudinary_ai')
+  }
 
   const response = await fetch(
     `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`,

@@ -49,6 +49,11 @@ export function Footer() {
         <div>
           <h3 className={headingClass}>{t('footer.company')}</h3>
           <ul className="mt-4 space-y-2">
+            <li>
+              <Link to="/login" className={linkClass}>
+                {t('auth.account')} / {t('auth.signIn')}
+              </Link>
+            </li>
             {COMPANY_LINKS.map((link) => (
               <li key={link.key}>
                 <a href={link.href} className={linkClass}>

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DISPLAY_STYLE_LABELS } from '@shared/constants/displayStyles'
+import { useApp } from '../../app/useApp'
+import { getDisplayStyleLabel } from '@shared/constants/displayStyles'
 import { deleteCategory, fetchCategories } from '../../lib/catalog'
 import type { Category } from '../../lib/catalog'
 
 export function CategoriesPage() {
+  const { locale } = useApp()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -113,7 +115,7 @@ export function CategoriesPage() {
                 </td>
                 <td className="px-4 py-3 font-sans text-sm text-ink/70">{category.slug}</td>
                 <td className="px-4 py-3 font-sans text-sm text-ink/70">
-                  {DISPLAY_STYLE_LABELS[category.displayStyle]}
+                  {getDisplayStyleLabel(category.displayStyle, locale)}
                 </td>
                 <td className="px-4 py-3 font-sans text-sm text-ink/70">{category.order}</td>
                 <td className="px-4 py-3 font-sans text-sm">

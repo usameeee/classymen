@@ -22,9 +22,18 @@ uploadRouter.post('/signature', requireAuth, requireRole('admin'), (req, res) =>
     typeof req.body?.folder === 'string' && req.body.folder.trim()
       ? (req.body.folder as string).trim()
       : DEFAULT_FOLDER;
+
+  /** Enable automatic AI background removal for product images. */
+  const removeBackground = req.body?.removeBackground === true;
+
   const timestamp = Math.round(Date.now() / 1000);
+  const paramsToSign: Record<string, string | number> = { folder, timestamp };
+  if (removeBackground) {
+    paramsToSign['background_removal'] = 'cloudinary_ai';
+  }
+
   const signature = cloudinary.utils.api_sign_request(
-    { folder, timestamp },
+    paramsToSign,
     env.CLOUDINARY_API_SECRET as string,
   );
 
@@ -34,5 +43,6 @@ uploadRouter.post('/signature', requireAuth, requireRole('admin'), (req, res) =>
     folder,
     timestamp,
     signature,
+    removeBackground,
   });
 });

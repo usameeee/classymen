@@ -138,7 +138,16 @@ export function ProductsPage() {
                   </span>
                 </td>
                 <td className="px-4 py-3 font-sans text-sm text-ink/70">
-                  {product.isFeatured ? 'Yes' : '—'}
+                  {product.isFeatured ? (
+                    <span className="inline-flex items-center gap-1.5 rounded border border-gold/40 bg-gold/15 px-2 py-0.5 text-xs font-semibold text-gold-dark">
+                      <span>★ Featured</span>
+                      <span className="text-[10px] uppercase font-mono tracking-tight text-gold-dark/80 bg-gold/20 px-1 py-0.2 rounded">
+                        {product.displayStyle || product.category?.displayStyle || 'rail'}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="text-ink/30">—</span>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-3">

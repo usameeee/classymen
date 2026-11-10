@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '../app/useApp'
 import { useCart } from '../app/useCart'
+import { useToast } from '../app/useToast'
 import { formatPrice } from '../components/catalog/ProductCard'
 import { DEFAULT_CURRENCY } from '@shared/constants/catalog'
 import { pickText } from '../lib/localized'
@@ -28,6 +29,7 @@ interface OrderResult {
 export function CartPage() {
   const { t, locale } = useApp()
   const { lines, subtotal, setQuantity, setGift, remove, clear } = useCart()
+  const { error: toastError, luxury: toastLuxury, warning: toastWarning } = useToast()
 
   const currency = lines[0]?.currency ?? DEFAULT_CURRENCY
 
@@ -54,12 +56,18 @@ export function CartPage() {
       if (res.valid) {
         setAppliedCoupon(res)
         localStorage.setItem('cmr:coupon', res.code!)
+        toastLuxury(
+          locale === 'ar' ? 'تم تطبيق الكوبون' : locale === 'fr' ? 'Coupon appliqué' : 'Coupon applied!',
+          `${res.code} · -${formatPrice(res.discountAmount ?? 0, currency)}`,
+        )
       } else {
         setCouponError(res.message ?? 'Invalid coupon.')
         setAppliedCoupon(null)
+        toastWarning(res.message ?? 'Invalid coupon.')
       }
     } catch {
       setCouponError('Failed to validate coupon.')
+      toastError(locale === 'ar' ? 'فشل التحقق من الكوبون' : locale === 'fr' ? 'Erreur de validation' : 'Failed to validate coupon.')
     } finally {
       setValidatingCoupon(false)
     }
@@ -102,6 +110,11 @@ export function CartPage() {
       setOrderResult(data)
       clear()
       localStorage.removeItem('cmr:coupon')
+      toastLuxury(
+        locale === 'ar' ? 'تم إرسال طلبك بنجاح!' : locale === 'fr' ? 'Commande envoyée !' : 'Order placed!',
+        data.orderNumber ? `#${data.orderNumber}` : undefined,
+        6000,
+      )
       if (data.whatsappUrl) {
         window.open(data.whatsappUrl, '_blank', 'noopener,noreferrer')
       }
@@ -241,7 +254,7 @@ export function CartPage() {
                         className="h-4 w-4 cursor-pointer accent-gold"
                       />
                       <span className="font-sans text-xs uppercase tracking-[0.15em] text-ink/60">
-                        🎁 {t('cart.gift')}
+                        {t('cart.gift')}
                       </span>
                     </label>
 

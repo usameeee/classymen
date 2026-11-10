@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LOCALE_DIRECTION } from '@shared/constants/locales'
 import { useApp } from '../app/useApp'
 import { formatPrice, primaryImage } from '../components/catalog/ProductCard'
 import type { Product } from '../lib/catalog'
@@ -89,17 +88,9 @@ function ShelfItem({ product, index, animated, onOpen }: ShelfItemProps) {
  * and horizontal drag/scroll navigation.
  */
 export function ShelfScene({ products, intensity }: SceneProps) {
-  const { locale } = useApp()
-  const isRtl = LOCALE_DIRECTION[locale] === 'rtl'
   const scrollRef = useRef<HTMLDivElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const animated = intensity !== 'low'
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (!scrollRef.current) return
-    const offset = direction === 'left' ? -300 : 300
-    scrollRef.current.scrollBy({ left: isRtl ? -offset : offset, behavior: 'smooth' })
-  }
 
   return (
     <div className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-cream/40 via-cream-card/20 to-cream/80 shadow-lg dark:from-[#18120b] dark:via-[#130e08] dark:to-[#0d0905]">
@@ -111,32 +102,15 @@ export function ShelfScene({ products, intensity }: SceneProps) {
             Showcase Counter
           </span>
         </div>
-
-        {/* Navigation Arrows */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => scroll(isRtl ? 'right' : 'left')}
-            aria-label="Previous items"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-cream-card text-ink transition-colors hover:border-gold hover:text-gold dark:bg-[#1a140f]"
-          >
-            {isRtl ? '→' : '←'}
-          </button>
-          <button
-            type="button"
-            onClick={() => scroll(isRtl ? 'left' : 'right')}
-            aria-label="Next items"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-cream-card text-ink transition-colors hover:border-gold hover:text-gold dark:bg-[#1a140f]"
-          >
-            {isRtl ? '←' : '→'}
-          </button>
-        </div>
       </div>
 
-      {/* Horizontal Counter Surface Track */}
-      <div
+      {/* Horizontal Counter Surface Track (Scroll / Swipe to navigate) */}
+      <motion.div
         ref={scrollRef}
-        className="relative flex gap-6 overflow-x-auto px-6 py-10 sm:gap-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        drag="x"
+        dragConstraints={{ left: -((products.length - 1) * 220), right: 0 }}
+        dragElastic={0.1}
+        className="relative flex gap-6 overflow-x-auto px-6 py-10 sm:gap-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden cursor-grab active:cursor-grabbing"
       >
         {products.map((product, index) => (
           <ShelfItem
@@ -147,7 +121,7 @@ export function ShelfScene({ products, intensity }: SceneProps) {
             onOpen={setSelectedProduct}
           />
         ))}
-      </div>
+      </motion.div>
 
       {/* Solid Counter Base Rim */}
       <div

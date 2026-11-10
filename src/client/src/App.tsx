@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppProvider } from './app/AppProvider'
 import { AuthProvider } from './app/AuthProvider'
 import { CartProvider } from './app/CartProvider'
+import { ToastProvider } from './app/ToastProvider'
 import { StorefrontLayout } from './pages/StorefrontLayout'
 import { HomePage } from './pages/HomePage'
 import './App.css'
@@ -12,10 +13,14 @@ const CatalogPage = lazy(() => import('./pages/CatalogPage').then((m) => ({ defa
 const CategoryPage = lazy(() => import('./pages/CategoryPage').then((m) => ({ default: m.CategoryPage })))
 const ProductPage = lazy(() => import('./pages/ProductPage').then((m) => ({ default: m.ProductPage })))
 const CartPage = lazy(() => import('./pages/CartPage').then((m) => ({ default: m.CartPage })))
-const AuthPage = lazy(() => import('./pages/AuthPage').then((m) => ({ default: m.AuthPage })))
+const CustomerLoginPage = lazy(() => import('./pages/auth/LoginPage').then((m) => ({ default: m.LoginPage })))
+const SignupPage = lazy(() => import('./pages/auth/SignupPage').then((m) => ({ default: m.SignupPage })))
+const VerifyOtpPage = lazy(() => import('./pages/auth/VerifyOtpPage').then((m) => ({ default: m.VerifyOtpPage })))
+const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })))
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })))
 
 // Lazy-loaded Admin pages
-const LoginPage = lazy(() => import('./pages/admin/LoginPage').then((m) => ({ default: m.LoginPage })))
+const AdminLoginPage = lazy(() => import('./pages/admin/LoginPage').then((m) => ({ default: m.LoginPage })))
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then((m) => ({ default: m.AdminLayout })))
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage').then((m) => ({ default: m.DashboardPage })))
 const OrdersPage = lazy(() => import('./pages/admin/OrdersPage').then((m) => ({ default: m.OrdersPage })))
@@ -38,6 +43,7 @@ function App() {
   return (
     <AppProvider>
       <AuthProvider>
+        <ToastProvider>
         <CartProvider>
           <BrowserRouter>
             <Suspense fallback={<PageLoading />}>
@@ -48,11 +54,14 @@ function App() {
                   <Route path="category/:slug" element={<CategoryPage />} />
                   <Route path="product/:slug" element={<ProductPage />} />
                   <Route path="cart" element={<CartPage />} />
-                  <Route path="login" element={<AuthPage />} />
-                  <Route path="signup" element={<AuthPage />} />
+                  <Route path="login" element={<CustomerLoginPage />} />
+                  <Route path="signup" element={<SignupPage />} />
+                  <Route path="verify-otp" element={<VerifyOtpPage />} />
+                  <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="reset-password" element={<ResetPasswordPage />} />
                 </Route>
 
-                <Route path="/admin/login" element={<LoginPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route
                   path="/admin"
                   element={
@@ -77,6 +86,7 @@ function App() {
             </Suspense>
           </BrowserRouter>
         </CartProvider>
+        </ToastProvider>
       </AuthProvider>
     </AppProvider>
   )

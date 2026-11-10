@@ -4,13 +4,10 @@ import type { MessageKey } from '../../i18n/dictionary'
 import { useApp } from '../../app/useApp'
 import { useAuth } from '../../app/useAuth'
 import { useCart } from '../../app/useCart'
-import { useCategories } from '../../app/useCategories'
-import { pickText } from '../../lib/localized'
 import { hasRoleAtLeast } from '@shared/constants/roles'
 import { Wordmark } from '../brand/Wordmark'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 import { ThemeToggle } from '../ui/ThemeToggle'
-import { AuthModal } from '../auth/AuthModal'
 
 interface NavItem {
   to: string
@@ -20,29 +17,22 @@ interface NavItem {
 
 const BASE_LINKS: { to: string; key: MessageKey; end?: boolean }[] = [
   { to: '/', key: 'nav.home', end: true },
-  { to: '/catalog', key: 'nav.catalog' },
+  { to: '/catalog', key: 'collections.title' },
 ]
 
 export function Header() {
-  const { t, locale } = useApp()
+  const { t } = useApp()
   const { user, logout } = useAuth()
   const { count } = useCart()
-  const categories = useCategories()
   const [open, setOpen] = useState(false)
-  const [authOpen, setAuthOpen] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
 
-  // Show top-level categories in primary navigation to keep header balanced
-  const rootCategories = categories.filter((cat) => !cat.parent)
-  const displayCategories = rootCategories.length > 0 ? rootCategories : categories
-
-  const items: NavItem[] = [
-    ...BASE_LINKS.map((link) => ({ to: link.to, label: t(link.key), end: link.end })),
-    ...displayCategories.map((category) => ({
-      to: `/category/${category.slug}`,
-      label: pickText(category.name, locale),
-    })),
-  ]
+  // Primary navigation: only Home and Collections
+  const items: NavItem[] = BASE_LINKS.map((link) => ({
+    to: link.to,
+    label: t(link.key),
+    end: link.end,
+  }))
 
   const navClass = ({ isActive }: { isActive: boolean }) =>
     `font-sans text-sm uppercase tracking-[0.15em] transition-colors ${
@@ -51,6 +41,41 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-cream/90 backdrop-blur">
+      {/* Admin Quick Action Top Bar (Yönetici Hızlı Erişim Çubuğu) */}
+      {user && hasRoleAtLeast(user.role, 'admin') && (
+        <div className="border-b border-gold/30 bg-[#16130f] px-4 py-1.5 font-sans text-xs text-gold">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-semibold text-cream-card">{user.name}</span>
+              <span className="rounded border border-gold/40 bg-gold/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-gold-light">
+                {user.role}
+              </span>
+            </div>
+            <div className="hidden sm:flex items-center gap-4 text-xs font-medium">
+              <Link to="/admin" className="text-ink-light/80 hover:text-gold transition-colors">
+                Dashboard
+              </Link>
+              <Link to="/admin/orders" className="text-ink-light/80 hover:text-gold transition-colors">
+                Orders
+              </Link>
+              <Link to="/admin/products" className="text-ink-light/80 hover:text-gold transition-colors">
+                Products
+              </Link>
+              <Link to="/admin/coupons" className="text-ink-light/80 hover:text-gold transition-colors">
+                Coupons
+              </Link>
+              <Link
+                to="/admin"
+                className="rounded border border-gold bg-gold px-2.5 py-0.5 font-bold text-cream-card shadow hover:bg-gold-dark transition-colors"
+              >
+                {t('auth.adminPanel')} →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="shrink-0" aria-label="Classy Men Rim">
           <Wordmark compact />
@@ -74,7 +99,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setAccountMenuOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-brand border border-line px-3 py-1.5 font-sans text-xs uppercase tracking-[0.1em] text-ink/80 transition-colors hover:border-gold hover:text-gold"
+                className="flex items-center gap-1.5 rounded-brand border border-gold/60 bg-gold/5 px-3 py-1.5 font-sans text-xs uppercase tracking-[0.1em] text-gold-dark dark:text-gold-light transition-all hover:border-gold hover:bg-gold/10"
                 aria-label={t('auth.account')}
               >
                 <svg
@@ -90,7 +115,7 @@ export function Header() {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
-                <span className="hidden max-w-[100px] truncate sm:inline">{user.name.split(' ')[0]}</span>
+                <span className="max-w-[100px] truncate">{user.name.split(' ')[0]}</span>
               </button>
 
               {accountMenuOpen && (
@@ -110,6 +135,12 @@ export function Header() {
                       {t('auth.adminPanel')} →
                     </Link>
                   )}
+                  <Link
+                    to="/login"
+                    className="block rounded px-3 py-2 text-xs font-sans text-ink/80 hover:bg-cream"
+                  >
+                    {t('auth.account')}
+                  </Link>
                   <button
                     type="button"
                     onClick={logout}
@@ -121,10 +152,9 @@ export function Header() {
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setAuthOpen(true)}
-              className="flex items-center gap-1.5 rounded-brand border border-line px-3 py-1.5 font-sans text-xs uppercase tracking-[0.1em] text-ink/80 transition-colors hover:border-gold hover:text-gold"
+            <Link
+              to="/login"
+              className="flex items-center gap-1.5 rounded-brand border border-gold/70 bg-gold/10 px-3 py-1.5 font-sans text-xs font-medium uppercase tracking-[0.1em] text-gold-dark dark:text-gold-light shadow-sm transition-all hover:bg-gold hover:text-cream-card"
               aria-label={t('auth.signIn')}
             >
               <svg
@@ -140,8 +170,8 @@ export function Header() {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-              <span className="hidden sm:inline">{t('auth.signIn')}</span>
-            </button>
+              <span>{t('auth.signIn')}</span>
+            </Link>
           )}
 
           <Link
@@ -219,37 +249,45 @@ export function Header() {
 
             <div className="border-t border-line/60 py-3">
               {user ? (
-                <div className="flex items-center justify-between">
-                  <span className="font-sans text-xs text-ink">{user.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOpen(false)
-                      logout()
-                    }}
-                    className="font-sans text-xs text-red-500 hover:underline"
-                  >
-                    {t('auth.signOut')}
-                  </button>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-sans text-xs font-semibold text-ink">
+                      {user.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false)
+                        logout()
+                      }}
+                      className="font-sans text-xs text-red-500 hover:underline"
+                    >
+                      {t('auth.signOut')}
+                    </button>
+                  </div>
+                  {hasRoleAtLeast(user.role, 'admin') && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setOpen(false)}
+                      className="block w-full text-center rounded-brand bg-gold py-2.5 font-sans text-xs uppercase tracking-[0.2em] font-bold text-cream-card shadow hover:bg-gold-dark"
+                    >
+                      {t('auth.adminPanel')} →
+                    </Link>
+                  )}
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpen(false)
-                    setAuthOpen(true)
-                  }}
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
                   className="font-sans text-sm uppercase tracking-[0.15em] text-gold"
                 >
                   {t('auth.signIn')} / {t('auth.signUp')}
-                </button>
+                </Link>
               )}
             </div>
           </div>
         </nav>
       )}
-
-      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
     </header>
   )
 }
