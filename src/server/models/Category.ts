@@ -13,7 +13,6 @@ const categorySchema = new Schema(
     displayStyle: {
       type: String,
       enum: [...DISPLAY_STYLES],
-      default: DEFAULT_DISPLAY_STYLE,
     },
     showcaseOnHome: {
       type: Boolean,

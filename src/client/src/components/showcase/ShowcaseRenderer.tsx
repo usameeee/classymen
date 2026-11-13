@@ -22,7 +22,7 @@ export function ShowcaseRenderer({ category, products }: ShowcaseRendererProps) 
     <section className="relative w-full py-16 bg-cream">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SceneRenderer
-          style={category.displayStyle}
+          style={category.displayStyle ?? 'grid-clean'}
           products={products}
         />
       </div>

@@ -56,6 +56,34 @@ function Hero() {
  * - Groups them strictly by their assigned scene `displayStyle` (set by admin per product).
  * - Renders each scene in a curated boutique order.
  */
+/**
+ * Resolves a product's featured showcase scene:
+ * 1. Explicit `product.displayStyle` set by admin
+ * 2. Intelligent inference from category slug & product name (perfume -> stage-3d, daraa -> mannequin)
+ * 3. Default fallback to 'rail' for generic fashion
+ */
+function resolveProductDisplayStyle(product: Product): DisplayStyle {
+  if (product.displayStyle && product.displayStyle !== 'grid-clean') {
+    return product.displayStyle
+  }
+  const catSlug = product.category?.slug?.toLowerCase() || ''
+  const catLegacy = (product.category as { displayStyle?: DisplayStyle })?.displayStyle
+  if (catLegacy && catLegacy !== 'grid-clean') {
+    return catLegacy
+  }
+  const text = `${product.name?.ar || ''} ${product.name?.fr || ''} ${product.name?.en || ''} ${catSlug} ${(product.tags || []).join(' ')}`.toLowerCase()
+  if (text.includes('parfum') || text.includes('عطر') || text.includes('perfume') || catSlug.includes('parfum') || catSlug.includes('bakhoor')) {
+    return 'stage-3d'
+  }
+  if (text.includes('daraa') || text.includes('دراعة') || catSlug.includes('tradition') || catSlug.includes('daraa')) {
+    return 'mannequin'
+  }
+  if (text.includes('wardrobe') || text.includes('dolap') || text.includes('خزانة') || catSlug.includes('pret-a-porter')) {
+    return 'wardrobe'
+  }
+  return 'rail'
+}
+
 function FeaturedShowcases() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -87,14 +115,13 @@ function FeaturedShowcases() {
     const groups = new Map<DisplayStyle, Product[]>()
 
     for (const p of featuredProducts) {
-      // Priority: product.displayStyle > product.category?.displayStyle > 'rail'
-      const style = (p.displayStyle || p.category?.displayStyle || 'rail') as DisplayStyle
+      const style = resolveProductDisplayStyle(p)
       if (!groups.has(style)) groups.set(style, [])
       groups.get(style)!.push(p)
     }
 
     // Curated showcase sequence on the homepage
-    const SCENE_ORDER: DisplayStyle[] = ['rail', 'wardrobe', 'mannequin', 'cabinet', 'floating', 'shelf', 'stage-3d', 'grid-clean']
+    const SCENE_ORDER: DisplayStyle[] = ['stage-3d', 'wardrobe', 'mannequin', 'rail', 'cabinet', 'shelf', 'floating', 'grid-clean']
 
     return SCENE_ORDER.filter((style) => groups.has(style) && groups.get(style)!.length > 0).map((style) => ({
       style,

@@ -79,7 +79,20 @@ export function ProductFormPage() {
         setTags(product.tags.join(', '))
         setIsActive(product.isActive)
         setIsFeatured(product.isFeatured)
-        if (product.displayStyle) setDisplayStyle(product.displayStyle)
+        if (product.displayStyle) {
+          setDisplayStyle(product.displayStyle)
+        } else {
+          // Intelligent default when product has no explicit displayStyle
+          const catSlug = product.category?.slug?.toLowerCase() || ''
+          const text = `${product.name?.ar || ''} ${product.name?.fr || ''} ${product.name?.en || ''}`.toLowerCase()
+          if (catSlug.includes('parfum') || catSlug.includes('bakhoor') || text.includes('عطر') || text.includes('parfum')) {
+            setDisplayStyle('stage-3d')
+          } else if (catSlug.includes('tradition') || catSlug.includes('daraa') || text.includes('دراعة')) {
+            setDisplayStyle('mannequin')
+          } else if (catSlug.includes('pret-a-porter') || catSlug.includes('costumes')) {
+            setDisplayStyle('wardrobe')
+          }
+        }
         if (product.wardrobeSection) setWardrobeSection(product.wardrobeSection)
       })
       .catch((err) => {
@@ -178,15 +191,11 @@ export function ProductFormPage() {
           {isEdit ? t('admin.editProduct') : t('admin.newProduct')}
         </h1>
 
-        {/* Category scene preview badge */}
+        {/* Selected Category Pill */}
         {selectedCategory && (
           <div className="mt-3 inline-flex items-center gap-2 rounded-brand border border-line/60 bg-cream-card px-3 py-1.5">
-            <span className="font-sans text-[11px] text-ink/50">
+            <span className="font-sans text-[11px] font-medium text-ink/70">
               {pickText(selectedCategory.name, locale)}
-            </span>
-            <span className="h-3 w-px bg-line" />
-            <span className="font-sans text-[11px] font-semibold text-gold uppercase tracking-wider">
-              {selectedCategory.displayStyle}
             </span>
           </div>
         )}
@@ -199,7 +208,19 @@ export function ProductFormPage() {
             <Field label={t('admin.category')} hint={t('admin.categoryHint')}>
               <Select
                 value={category}
-                onChange={setCategory}
+                onChange={(catId) => {
+                  setCategory(catId)
+                  const targetCat = categories.find((c) => c._id === catId)
+                  const slug = targetCat?.slug?.toLowerCase() || ''
+                  const catName = targetCat?.name?.ar || ''
+                  if (slug.includes('parfum') || slug.includes('bakhoor') || catName.includes('عطر')) {
+                    setDisplayStyle('stage-3d')
+                  } else if (slug.includes('tradition') || slug.includes('daraa') || catName.includes('دراعة')) {
+                    setDisplayStyle('mannequin')
+                  } else if (slug.includes('pret-a-porter') || slug.includes('costumes')) {
+                    setDisplayStyle('wardrobe')
+                  }
+                }}
                 placeholder={t('admin.chooseCategory')}
                 options={categories.map((item) => ({
                   value: item._id,
@@ -239,7 +260,7 @@ export function ProductFormPage() {
           <ImageUploader
             label={t('admin.photoSlotsTitle')}
             hint={isFeatured ? t('admin.photoSlotsHint') : 'Upload standard product photos.'}
-            displayStyle={isFeatured ? ((displayStyle || selectedCategory?.displayStyle || 'rail') as DisplayStyle) : null}
+            displayStyle={isFeatured ? ((displayStyle || 'rail') as DisplayStyle) : null}
             wardrobeSection={isFeatured && displayStyle === 'wardrobe' ? wardrobeSection : undefined}
             value={images}
             onChange={setImages}
@@ -274,7 +295,7 @@ export function ProductFormPage() {
                 onChange={(checked) => {
                   setIsFeatured(checked)
                   if (checked && !displayStyle) {
-                    setDisplayStyle((selectedCategory?.displayStyle as DisplayStyle) || 'rail')
+                    setDisplayStyle('rail')
                   }
                 }}
                 label={t('admin.featuredHomepage')}
@@ -291,7 +312,7 @@ export function ProductFormPage() {
                       {locale === 'ar' ? 'اختر نمط العرض في الصفحة الرئيسية' : 'Select Homepage Scene Style'}
                     </span>
                     <span className="font-mono text-[10px] text-ink/50 uppercase font-semibold">
-                      {displayStyle || selectedCategory?.displayStyle || 'rail'}
+                      {displayStyle || 'rail'}
                     </span>
                   </div>
 
@@ -305,7 +326,7 @@ export function ProductFormPage() {
                       { id: 'shelf', label: locale === 'ar' ? 'رف طاولة (Shelf)' : locale === 'fr' ? 'Étagère Prestige' : 'Shelf (Butik Tezgah)' },
                       { id: 'stage-3d', label: locale === 'ar' ? 'منصة ثلاثية الأبعاد (Stage 3D)' : locale === 'fr' ? 'Scène 3D Interactive' : 'Interactive 3D Stage' },
                     ].map((opt) => {
-                      const isSelected = (displayStyle || selectedCategory?.displayStyle || 'rail') === opt.id
+                      const isSelected = (displayStyle || 'rail') === opt.id
                       return (
                         <button
                           key={opt.id}
@@ -436,6 +457,8 @@ export function ProductFormPage() {
           sizes,
           images,
           isFeatured,
+          displayStyle: isFeatured && displayStyle ? (displayStyle as DisplayStyle) : undefined,
+          wardrobeSection: isFeatured && displayStyle === 'wardrobe' ? wardrobeSection : undefined,
           isMadeToMeasure,
           stock: stock ?? 0,
           tags: tags.split(',').map((t) => t.trim()).filter(Boolean),

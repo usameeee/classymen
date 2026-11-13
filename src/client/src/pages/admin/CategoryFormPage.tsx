@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useApp } from '../../app/useApp'
-import {
-  DEFAULT_DISPLAY_STYLE,
-  DISPLAY_STYLES,
-  getDisplayStyleLabel,
-} from '@shared/constants/displayStyles'
-import type { DisplayStyle } from '@shared/constants/displayStyles'
 import { Checkbox, Field, NumberInput, Select, inputClass } from '../../components/admin/form'
 import { LocalizedInput } from '../../components/admin/LocalizedInput'
 import { ImageUploader } from '../../components/admin/ImageUploader'
@@ -16,7 +9,6 @@ import type { Category, CategoryPayload, LocalizedText, ProductImageAsset } from
 const emptyText = (): LocalizedText => ({ ar: '', fr: '', en: '' })
 
 export function CategoryFormPage() {
-  const { locale } = useApp()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const isEdit = Boolean(id)
@@ -24,7 +16,6 @@ export function CategoryFormPage() {
   const [name, setName] = useState<LocalizedText>(emptyText)
   const [description, setDescription] = useState<LocalizedText>(emptyText)
   const [slug, setSlug] = useState('')
-  const [displayStyle, setDisplayStyle] = useState<DisplayStyle>(DEFAULT_DISPLAY_STYLE)
   const [parentId, setParentId] = useState<string>('')
   const [availableParents, setAvailableParents] = useState<Category[]>([])
   const [order, setOrder] = useState<number | undefined>(0)
@@ -58,7 +49,6 @@ export function CategoryFormPage() {
         setName(category.name)
         setDescription(category.description)
         setSlug(category.slug)
-        setDisplayStyle(category.displayStyle)
         setParentId(category.parent?._id ?? '')
         setOrder(category.order)
         setIsActive(category.isActive)
@@ -88,7 +78,6 @@ export function CategoryFormPage() {
     const payload: CategoryPayload = {
       name,
       description,
-      displayStyle,
       parentId: parentId || null,
       order,
       isActive,
@@ -142,17 +131,6 @@ export function CategoryFormPage() {
               value={slug}
               onChange={(event) => setSlug(event.target.value)}
               className={inputClass}
-            />
-          </Field>
-
-          <Field label="Display style">
-            <Select
-              value={displayStyle}
-              onChange={(value) => setDisplayStyle(value as DisplayStyle)}
-              options={DISPLAY_STYLES.map((style) => ({
-                value: style,
-                label: getDisplayStyleLabel(style, locale),
-              }))}
             />
           </Field>
 

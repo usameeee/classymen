@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { LOCALE_DIRECTION } from '@shared/constants/locales'
 import { useApp } from '../app/useApp'
 import { formatPrice } from '../components/catalog/ProductCard'
@@ -9,380 +9,769 @@ import { pickText } from '../lib/localized'
 import { SceneDetailCard } from './SceneDetailCard'
 import type { SceneProps } from './sceneIntensity'
 
-const DOOR_SPRING = { type: 'spring', stiffness: 50, damping: 14, mass: 1 } as const
-const SNAP_SPRING = { type: 'spring', stiffness: 320, damping: 36 } as const
+const DOOR_SPRING = { type: 'spring', stiffness: 45, damping: 14, mass: 1 } as const
 
-/** Ensures Cloudinary images have backgrounds stripped on the fly. */
+/**
+ * Ensures Cloudinary images have backgrounds removed cleanly and are served as transparent PNGs.
+ */
 function ensureTransparentUrl(url?: string): string {
   if (!url) return ''
   if (url.includes('cloudinary.com') && url.includes('/image/upload/')) {
-    if (!url.includes('e_make_transparent')) {
-      return url.replace('/image/upload/', '/image/upload/e_make_transparent:20,f_auto,q_auto/')
+    let clean = url.replace(/\.(jpg|jpeg)$/i, '.png')
+    if (!clean.includes('e_make_transparent')) {
+      clean = clean.replace('/image/upload/', '/image/upload/e_make_transparent:35,e_trim,f_png/')
     }
+    return clean
   }
   return url
 }
 
-// ─────────────────────────────────────────────
-// HANGING ROD COMPARTMENT (top)
-// ─────────────────────────────────────────────
-interface HangingCompartmentProps {
+// ─────────────────────────────────────────────────────────────
+// 1. LEFT BAY: HANGING ROD SECTION ("asililar railscene gibi olacak")
+// ─────────────────────────────────────────────────────────────
+interface HangingBayProps {
   products: Product[]
   onOpen: (product: Product) => void
+  isRtl: boolean
 }
 
-function HangingCompartment({ products, onOpen }: HangingCompartmentProps) {
+function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
   const { locale } = useApp()
-  const isRtl = LOCALE_DIRECTION[locale] === 'rtl'
   const [activeIdx, setActiveIdx] = useState(0)
   const [isFlipped, setIsFlipped] = useState(false)
   const hasMultiple = products.length > 1
 
+  const current = products[Math.min(activeIdx, products.length - 1)]
   const prevIdx = (activeIdx - 1 + products.length) % products.length
   const nextIdx = (activeIdx + 1) % products.length
-  const current = products[Math.min(activeIdx, products.length - 1)]
   const prevProduct = hasMultiple ? products[prevIdx] : null
   const nextProduct = hasMultiple ? products[nextIdx] : null
 
-  function handlePrev() { setActiveIdx((i) => (i - 1 + products.length) % products.length); setIsFlipped(false) }
-  function handleNext() { setActiveIdx((i) => (i + 1) % products.length); setIsFlipped(false) }
+  function handlePrev() {
+    setActiveIdx((i) => (i - 1 + products.length) % products.length)
+    setIsFlipped(false)
+  }
+
+  function handleNext() {
+    setActiveIdx((i) => (i + 1) % products.length)
+    setIsFlipped(false)
+  }
 
   useEffect(() => {
     if (!hasMultiple) return
-    function onKey(e: KeyboardEvent) {
+    function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'ArrowLeft') isRtl ? handleNext() : handlePrev()
       else if (e.key === 'ArrowRight') isRtl ? handlePrev() : handleNext()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [hasMultiple, isRtl, products.length])
+
+  if (!current) {
+    return (
+      <div className="flex h-64 items-center justify-center text-center p-6 text-amber-300/40 font-sans text-xs">
+        {locale === 'ar' ? 'لا توجد قطع معلقة في هذا القسم' : 'No hanging garments'}
+      </div>
+    )
+  }
 
   const frontImage = ensureTransparentUrl(current.images[0]?.url)
   const backImage = ensureTransparentUrl(current.images[1]?.url || current.images[0]?.url)
   const name = pickText(current.name, locale)
 
   return (
-    <div className="relative">
-      {/* Brass Rod */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-5 z-20 flex items-center">
-        <svg className="w-full h-5 overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 20">
-          <rect x="0" y="6" width="1000" height="8" fill="rgba(0,0,0,0.5)" rx="4" />
-          <rect x="0" y="4" width="1000" height="7" fill="url(#wRod)" rx="3.5" />
-          <rect x="0" y="4.5" width="1000" height="2" fill="rgba(255,255,255,0.35)" rx="1" />
-          <rect x="0" y="1" width="10" height="16" fill="url(#wBracket)" rx="2" />
-          <rect x="990" y="1" width="10" height="16" fill="url(#wBracket)" rx="2" />
+    <div className="relative flex flex-col justify-between w-full select-none pt-1">
+      {/* ── Closet Rod (Straight Metallic Brushed Bar) ── */}
+      <div className="relative w-full h-7 flex items-center z-30">
+        <svg className="w-full h-7 overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 28">
+          <rect x="0" y="10" width="1000" height="7" fill="rgba(0,0,0,0.55)" rx="3.5" />
+          <rect x="0" y="7" width="1000" height="7" fill="url(#wardrobeBrassRodGrad)" rx="3.5" />
+          <rect x="0" y="7.5" width="1000" height="1.8" fill="rgba(255,255,255,0.6)" rx="1" />
+          <rect x="0" y="2" width="12" height="17" fill="url(#wardrobeFlangeGrad)" rx="2" />
+          <rect x="988" y="2" width="12" height="17" fill="url(#wardrobeFlangeGrad)" rx="2" />
           <defs>
-            <linearGradient id="wRod" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id="wardrobeBrassRodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#785928" />
               <stop offset="25%" stopColor="#d4af37" />
-              <stop offset="50%" stopColor="#ffd875" />
+              <stop offset="50%" stopColor="#fff3bf" />
               <stop offset="75%" stopColor="#d4af37" />
               <stop offset="100%" stopColor="#785928" />
             </linearGradient>
-            <linearGradient id="wBracket" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#8a6314" />
+            <linearGradient id="wardrobeFlangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffea9f" />
               <stop offset="50%" stopColor="#d4af37" />
-              <stop offset="100%" stopColor="#8a6314" />
+              <stop offset="100%" stopColor="#5a3f18" />
             </linearGradient>
           </defs>
         </svg>
       </div>
 
-      {/* 3-Piece Carousel */}
-      <motion.div
-        className="relative flex items-start justify-center gap-4 sm:gap-10 pt-5 pb-3 min-h-[340px] sm:min-h-[400px] cursor-grab active:cursor-grabbing select-none"
-        drag={hasMultiple ? 'x' : false}
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.12}
-        dragMomentum={false}
-        onDragEnd={(_, info) => {
-          const THRESHOLD = 60
-          const goNext = isRtl ? info.offset.x > THRESHOLD || info.velocity.x > 400 : info.offset.x < -THRESHOLD || info.velocity.x < -400
-          const goPrev = isRtl ? info.offset.x < -THRESHOLD || info.velocity.x < -400 : info.offset.x > THRESHOLD || info.velocity.x > 400
-          if (goNext) handleNext()
-          else if (goPrev) handlePrev()
-        }}
-      >
-        {/* Prev flanking piece */}
+      {/* ── Garments On Rod with RailScene Carousel & 180° Flip ── */}
+      <div className="relative flex items-start justify-center gap-3 sm:gap-6 -mt-3 pt-0 pb-2 min-h-[280px] sm:min-h-[320px]">
+        {/* Previous Flanking Piece */}
         {hasMultiple && prevProduct && (
-          <motion.div
+          <div
             onClick={isRtl ? handleNext : handlePrev}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isRtl ? handleNext() : handlePrev() } }}
-            className="hidden sm:flex flex-col items-center cursor-pointer select-none w-32 sm:w-40 shrink-0 opacity-35 hover:opacity-70 transition-opacity duration-300"
-            style={{ transform: isRtl ? 'scale(0.75) perspective(900px) rotateY(-16deg)' : 'scale(0.75) perspective(900px) rotateY(16deg)' }}
+            className="hidden sm:flex flex-col items-center cursor-pointer select-none w-24 sm:w-28 shrink-0 opacity-40 hover:opacity-85 transition-all duration-300 pt-3"
+            style={{
+              transform: isRtl
+                ? 'scale(0.8) perspective(800px) rotateY(-18deg)'
+                : 'scale(0.8) perspective(800px) rotateY(18deg)',
+            }}
           >
-            {/* Invisible hook stub */}
-            <div className="h-10 w-6 opacity-0" aria-hidden="true" />
-            <div className="w-full h-[200px] sm:h-[260px] -mt-5 z-20">
-              {prevProduct.images[0]?.url ? (
-                <img src={ensureTransparentUrl(prevProduct.images[0].url)} alt={pickText(prevProduct.name, locale)} loading="lazy" draggable={false} className="h-full w-auto max-w-full mx-auto object-contain object-top filter drop-shadow-[0_15px_22px_rgba(0,0,0,0.4)] pointer-events-none" />
-              ) : (
-                <div className="flex h-full items-center justify-center"><span className="font-display text-2xl text-gold/30">{pickText(prevProduct.name, locale).charAt(0)}</span></div>
-              )}
+            <div className="w-full h-[180px] sm:h-[220px]">
+              <img
+                src={ensureTransparentUrl(prevProduct.images[0]?.url)}
+                alt=""
+                className="h-full w-auto max-w-full mx-auto object-contain object-top filter drop-shadow-[0_16px_22px_rgba(0,0,0,0.6)] pointer-events-none"
+              />
             </div>
-          </motion.div>
+          </div>
         )}
 
-        {/* Active center piece */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current._id}
-            initial={{ opacity: 0, scale: 0.9, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -12 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-30 flex flex-col items-center select-none w-52 sm:w-64 shrink-0"
+        {/* Active Centered Garment (Directly Hung with Brass Hook) */}
+        <div className="relative z-30 flex flex-col items-center select-none w-48 sm:w-60 shrink-0">
+          <div
+            onClick={() => {
+              if (current.images.length > 1) {
+                setIsFlipped((f) => !f)
+              } else {
+                onOpen(current)
+              }
+            }}
+            className="group relative w-full cursor-pointer [perspective:1000px] flex flex-col items-center"
           >
-            <div
-              onClick={() => { if (current.images.length > 1) { setIsFlipped((f) => !f) } else { onOpen(current) } }}
-              className="group relative w-full cursor-pointer [perspective:1000px] flex flex-col items-center"
-            >
-              {/* Brass Hook — invisible (inside collar) */}
-              <div className="relative z-30 flex flex-col items-center pointer-events-none opacity-0 h-10 w-6" aria-hidden="true" />
+            {/* Brass Hook anchored snugly ON the rod */}
+            <div className="relative z-30 flex flex-col items-center pointer-events-none -mb-1">
+              <svg className="w-7 h-10 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.7)]" viewBox="0 0 24 40" fill="none">
+                <path
+                  d="M 12 38 L 12 14 C 12 5 18 1 20 6 C 22 10 17 14 12 14"
+                  stroke="url(#hangingHookGradWardrobe)"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                />
+                <ellipse cx="12" cy="38" rx="3.5" ry="1.8" fill="url(#hangingHookGradWardrobe)" stroke="#785928" strokeWidth="0.8" />
+                <defs>
+                  <linearGradient id="hangingHookGradWardrobe" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#fff3bf" />
+                    <stop offset="50%" stopColor="#d4af37" />
+                    <stop offset="100%" stopColor="#785928" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
 
-              {/* Price Tag */}
-              <div className="absolute top-6 start-10 sm:start-12 z-40 pointer-events-none">
-                <div className="w-px h-6 bg-amber-300/80 mx-auto" />
-                <div className="rounded-[3px] border border-amber-700/50 bg-[#fdfbf7] dark:bg-[#1a1714] dark:border-gold/40 px-2.5 py-0.5 shadow-md flex flex-col items-center">
-                  <div className="w-1 h-1 rounded-full border border-gold/60 bg-gold/20 mb-0.5" />
-                  <span className="font-mono text-[10px] font-bold text-ink dark:text-gold tracking-tight whitespace-nowrap">
-                    {formatPrice(current.price, current.currency)}
-                  </span>
+            {/* Suspended Price Tag */}
+            <div className="absolute top-8 start-4 sm:start-6 z-40 pointer-events-none">
+              <div className="w-px h-5 bg-amber-300/80 mx-auto" />
+              <div className="rounded-[3px] border border-amber-600/60 bg-[#1a1714] px-2 py-0.5 shadow-lg flex flex-col items-center">
+                <div className="w-1 h-1 rounded-full border border-gold/60 bg-gold/30 mb-0.5" />
+                <span className="font-mono text-[9px] font-bold text-amber-300 whitespace-nowrap">
+                  {formatPrice(current.price, current.currency)}
+                </span>
+              </div>
+            </div>
+
+            {/* 3D Garment Body with Smooth 180° Flip */}
+            <div className="relative w-full h-[210px] sm:h-[250px] z-20">
+              <motion.div
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transformStyle: 'preserve-3d' }}
+                className="relative w-full h-full flex flex-col items-center justify-start group-hover:-translate-y-1.5 transition-transform duration-300"
+              >
+                {/* Front Face */}
+                <div style={{ backfaceVisibility: 'hidden' }} className="absolute inset-0 flex flex-col items-center justify-start">
+                  {frontImage ? (
+                    <img
+                      src={frontImage}
+                      alt={name}
+                      loading="lazy"
+                      draggable={false}
+                      className="h-full w-auto max-w-full object-contain object-top filter drop-shadow-[0_20px_28px_rgba(0,0,0,0.7)] group-hover:scale-[1.03] transition-transform duration-300 pointer-events-none"
+                    />
+                  ) : (
+                    <div className="flex h-44 w-32 items-center justify-center rounded-2xl border border-dashed border-gold/40 bg-gold/5">
+                      <span className="font-display text-4xl text-gold/40">{name.charAt(0)}</span>
+                    </div>
+                  )}
+                  {current.images.length > 1 && (
+                    <span className="absolute bottom-0 rounded-full border border-gold/40 bg-black/80 px-2.5 py-0.5 font-sans text-[9px] uppercase tracking-wider text-gold-light opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                      180° Flip
+                    </span>
+                  )}
                 </div>
-              </div>
 
-              {/* Garment Body */}
-              <div className="relative w-full h-[260px] sm:h-[320px] -mt-4 z-20">
-                <motion.div
-                  animate={{ rotateY: isFlipped ? 180 : 0 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ transformStyle: 'preserve-3d' }}
-                  className="relative w-full h-full flex flex-col items-center justify-start group-hover:-translate-y-1.5 transition-transform duration-300"
+                {/* Back Face */}
+                <div
+                  style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                  className="absolute inset-0 flex flex-col items-center justify-start"
                 >
-                  <div style={{ backfaceVisibility: 'hidden' }} className="absolute inset-0 flex flex-col items-center justify-start">
-                    {frontImage ? (
-                      <img src={frontImage} alt={name} loading="lazy" draggable={false} className="h-full w-auto max-w-full object-contain object-top filter drop-shadow-[0_22px_32px_rgba(0,0,0,0.4)] pointer-events-none group-hover:scale-[1.03] transition-transform duration-300" />
-                    ) : (
-                      <div className="flex h-48 w-36 items-center justify-center rounded-2xl border border-dashed border-gold/40 bg-gold/5">
-                        <span className="font-display text-4xl text-gold/40">{name.charAt(0)}</span>
-                      </div>
-                    )}
-                    {current.images.length > 1 && (
-                      <span className="absolute bottom-1 rounded-full border border-gold/30 bg-black/60 px-2.5 py-0.5 font-sans text-[9px] uppercase tracking-wider text-gold-light opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">Flip 180°</span>
-                    )}
-                  </div>
-                  <div style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }} className="absolute inset-0 flex flex-col items-center justify-start">
-                    {backImage ? (
-                      <img src={backImage} alt={`${name} back`} loading="lazy" draggable={false} className="h-full w-auto max-w-full object-contain object-top filter drop-shadow-[0_22px_32px_rgba(0,0,0,0.4)] pointer-events-none" />
-                    ) : (
-                      <div className="flex h-48 w-36 items-center justify-center rounded-2xl border border-dashed border-gold/40 bg-gold/5">
-                        <span className="font-display text-4xl text-gold/40">{name.charAt(0)}</span>
-                      </div>
-                    )}
-                    <span className="absolute bottom-1 rounded-full border border-gold/40 bg-black/70 px-2 py-0.5 font-sans text-[9px] uppercase tracking-wider text-gold-light">Back View</span>
-                  </div>
-                </motion.div>
-              </div>
+                  {backImage ? (
+                    <img
+                      src={backImage}
+                      alt={`${name} back`}
+                      loading="lazy"
+                      draggable={false}
+                      className="h-full w-auto max-w-full object-contain object-top filter drop-shadow-[0_20px_28px_rgba(0,0,0,0.7)] pointer-events-none"
+                    />
+                  ) : null}
+                </div>
+              </motion.div>
             </div>
+          </div>
 
-            {/* Name + CTA */}
-            <div className="mt-2 text-center w-full px-2">
-              <p className="font-display text-sm sm:text-base text-amber-100 font-semibold line-clamp-1">{name}</p>
-              <button type="button" onClick={() => onOpen(current)} className="mt-0.5 inline-flex items-center gap-1 font-sans text-xs uppercase tracking-[0.15em] text-amber-400 hover:underline font-bold">Details →</button>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+          {/* Product Title & Navigation */}
+          <div className="mt-1 text-center w-full px-2">
+            <Link
+              to={`/product/${current.slug}`}
+              className="font-display text-sm font-semibold text-amber-100 hover:text-amber-300 transition-colors line-clamp-1"
+            >
+              {name}
+            </Link>
+            <button
+              type="button"
+              onClick={() => onOpen(current)}
+              className="mt-0.5 inline-flex items-center gap-1 font-sans text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300 font-bold"
+            >
+              <span>{locale === 'ar' ? 'معاينة القطعة' : 'Inspect Piece'}</span>
+              <span className="rtl:rotate-180">→</span>
+            </button>
+          </div>
+        </div>
 
-        {/* Next flanking piece */}
+        {/* Next Flanking Piece */}
         {hasMultiple && nextProduct && (
-          <motion.div
+          <div
             onClick={isRtl ? handlePrev : handleNext}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isRtl ? handlePrev() : handleNext() } }}
-            className="hidden sm:flex flex-col items-center cursor-pointer select-none w-32 sm:w-40 shrink-0 opacity-35 hover:opacity-70 transition-opacity duration-300"
-            style={{ transform: isRtl ? 'scale(0.75) perspective(900px) rotateY(16deg)' : 'scale(0.75) perspective(900px) rotateY(-16deg)' }}
+            className="hidden sm:flex flex-col items-center cursor-pointer select-none w-24 sm:w-28 shrink-0 opacity-40 hover:opacity-85 transition-all duration-300 pt-3"
+            style={{
+              transform: isRtl
+                ? 'scale(0.8) perspective(800px) rotateY(18deg)'
+                : 'scale(0.8) perspective(800px) rotateY(-18deg)',
+            }}
           >
-            <div className="h-10 w-6 opacity-0" aria-hidden="true" />
-            <div className="w-full h-[200px] sm:h-[260px] -mt-5 z-20">
-              {nextProduct.images[0]?.url ? (
-                <img src={ensureTransparentUrl(nextProduct.images[0].url)} alt={pickText(nextProduct.name, locale)} loading="lazy" draggable={false} className="h-full w-auto max-w-full mx-auto object-contain object-top filter drop-shadow-[0_15px_22px_rgba(0,0,0,0.4)] pointer-events-none" />
-              ) : (
-                <div className="flex h-full items-center justify-center"><span className="font-display text-2xl text-gold/30">{pickText(nextProduct.name, locale).charAt(0)}</span></div>
-              )}
+            <div className="w-full h-[180px] sm:h-[220px]">
+              <img
+                src={ensureTransparentUrl(nextProduct.images[0]?.url)}
+                alt=""
+                className="h-full w-auto max-w-full mx-auto object-contain object-top filter drop-shadow-[0_16px_22px_rgba(0,0,0,0.6)] pointer-events-none"
+              />
             </div>
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
 
-      {/* Dot Pills */}
+      {/* Hanging Carousel Controls */}
       {hasMultiple && (
-        <div className="flex items-center justify-center gap-1.5 mt-1">
-          {products.map((p, idx) => (
-            <button
-              key={p._id}
-              type="button"
-              onClick={() => { setActiveIdx(idx); setIsFlipped(false) }}
-              aria-label={`Product ${idx + 1}`}
-              className={`transition-all rounded-full ${idx === activeIdx ? 'w-6 h-1.5 bg-gradient-to-r from-amber-400 to-amber-200' : 'w-1.5 h-1.5 bg-amber-700/40 hover:bg-amber-500/60'}`}
-            />
-          ))}
+        <div className="flex items-center justify-center gap-2 mt-1">
+          <button
+            type="button"
+            onClick={isRtl ? handleNext : handlePrev}
+            className="w-6 h-6 rounded-full border border-amber-700/40 bg-amber-950/60 text-amber-300 hover:bg-amber-600 hover:text-black flex items-center justify-center text-xs font-bold transition-colors"
+          >
+            {isRtl ? '→' : '←'}
+          </button>
+          <span className="font-mono text-[10px] text-amber-400/80">
+            {activeIdx + 1} / {products.length}
+          </span>
+          <button
+            type="button"
+            onClick={isRtl ? handlePrev : handleNext}
+            className="w-6 h-6 rounded-full border border-amber-700/40 bg-amber-950/60 text-amber-300 hover:bg-amber-600 hover:text-black flex items-center justify-center text-xs font-bold transition-colors"
+          >
+            {isRtl ? '←' : '→'}
+          </button>
         </div>
       )}
     </div>
   )
 }
 
-// ─────────────────────────────────────────────
-// FOLDED SHELF COMPARTMENT (middle)
-// ─────────────────────────────────────────────
-interface FoldedShelfProps {
+// ─────────────────────────────────────────────────────────────
+// 2. LEFT BAY BOTTOM: SINGLE LARGE OPENABLE DRAWER ("tek buyuk cekmece")
+// ─────────────────────────────────────────────────────────────
+interface SingleLargeDrawerProps {
   products: Product[]
-  onOpen: (product: Product) => void
+  onOpenModal: (product: Product) => void
 }
 
-function FoldedShelf({ products, onOpen }: FoldedShelfProps) {
+function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
   const { locale } = useApp()
-  const [activeIdx, setActiveIdx] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="space-y-2">
-      {/* Shelf label */}
-      <div className="flex items-center gap-2 px-1">
-        <div aria-hidden="true" className="h-px flex-1 bg-amber-700/30" />
-        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-amber-500/60">
-          {locale === 'ar' ? 'الملابس المطوية' : locale === 'fr' ? 'Vêtements pliés' : 'Folded Garments'}
-        </span>
-        <div aria-hidden="true" className="h-px flex-1 bg-amber-700/30" />
-      </div>
+    <div className="relative w-full mt-4 select-none">
+      {/* Top Wood/Marble Edge of Drawer Bench */}
+      <div className="h-1.5 w-full bg-gradient-to-r from-amber-700/40 via-amber-400/80 to-amber-700/40 shadow-xs" />
 
-      {/* Wooden shelf board */}
-      <div aria-hidden="true" className="h-2.5 w-full rounded-sm border-t border-amber-500/40 bg-gradient-to-b from-[#4a3520] via-[#3a2a18] to-[#2a1e10] shadow-md" />
+      {/* Single Large Drawer Box */}
+      <div className="rounded-b-lg border border-amber-900/60 bg-gradient-to-b from-[#241910] via-[#1a110a] to-[#120b06] p-3.5 shadow-xl">
+        {/* Header Bar with Status and Open/Close Button */}
+        <div className="flex items-center justify-between pb-2.5 border-b border-amber-900/40">
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
+            <span className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300">
+              {locale === 'ar' ? 'الدرج الكبير للأحذية والعطور' : locale === 'fr' ? 'Grand Tiroir Principal' : 'Large Boutique Drawer'}
+            </span>
+            {products.length > 0 && (
+              <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                {products.length} {locale === 'ar' ? 'قطع' : 'items'}
+              </span>
+            )}
+          </div>
 
-      {/* Folded items grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 px-1 pb-1">
-        {products.map((item, idx) => {
-          const name = pickText(item.name, locale)
-          const img = item.images[0]?.url
-          const isActive = idx === activeIdx
-          return (
-            <button
-              key={item._id}
-              type="button"
-              onClick={() => { setActiveIdx(idx); onOpen(item) }}
-              className={`group relative flex flex-col rounded-brand border transition-all duration-300 overflow-hidden ${
-                isActive
-                  ? 'border-amber-400/60 bg-amber-500/10 shadow-[0_0_10px_rgba(212,175,55,0.2)]'
-                  : 'border-amber-900/30 bg-black/15 hover:border-amber-500/40 hover:bg-amber-900/15'
-              }`}
+          <button
+            type="button"
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/50 bg-amber-500/15 hover:bg-amber-500 hover:text-black font-sans text-xs font-bold text-amber-200 transition-all cursor-pointer shadow-xs active:scale-95"
+          >
+            <svg
+              className={`w-3.5 h-3.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
             >
-              <div className="relative w-full aspect-square overflow-hidden bg-black/20">
-                {img ? (
-                  <img src={img} alt={name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+            <span>
+              {isOpen
+                ? (locale === 'ar' ? 'إغلاق الدرج' : 'Close Drawer')
+                : (locale === 'ar' ? 'انقر لفتح الدرج' : 'Open Drawer')}
+            </span>
+          </button>
+        </div>
+
+        {/* The Single Large Drawer Front */}
+        <div className="mt-3">
+          <div
+            onClick={() => setIsOpen((prev) => !prev)}
+            role="button"
+            tabIndex={0}
+            className="relative h-14 rounded-md border border-amber-800/40 bg-gradient-to-b from-[#2e1f14] via-[#22160d] to-[#170e08] flex items-center justify-center shadow-inner cursor-pointer group hover:border-amber-600/50 transition-colors"
+          >
+            {/* Elegant Long Brass Horizontal Groove Handle */}
+            <div className="w-44 sm:w-56 h-2 rounded-full bg-gradient-to-r from-amber-700 via-amber-300 to-amber-700 shadow-xs group-hover:via-amber-200 transition-colors" />
+
+            {/* Subtle Label on handle */}
+            <span className="absolute bottom-1.5 font-mono text-[9px] text-amber-500/50 tracking-widest uppercase">
+              {isOpen ? (locale === 'ar' ? 'مفتوح' : 'OPEN') : (locale === 'ar' ? 'اسحب لفتح الدرج' : 'PULL TO OPEN')}
+            </span>
+          </div>
+
+          {/* Pulled-Out Velvet Tray (Smooth Slide Reveal) */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, y: -10 }}
+                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -10 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                className="overflow-hidden mt-2.5 rounded-lg border border-amber-700/60 bg-gradient-to-b from-[#18110a] via-[#100a06] to-[#0a0604] p-3.5 shadow-2xl"
+              >
+                {/* Velvet Interior Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-amber-900/50">
+                  <span className="font-sans text-[10px] uppercase tracking-widest text-amber-400/80">
+                    {locale === 'ar' ? 'داخل الدرج — المنتجات مرتبة بشكل مستوٍ' : 'Inside Drawer — Products Laid Flat'}
+                  </span>
+                  <span className="font-mono text-[9px] text-amber-500/60 uppercase">Velvet Atelier Lining</span>
+                </div>
+
+                {/* Products laid out flat in a neat row ("urunler duz bir sekilde dizilir") */}
+                {products.length > 0 ? (
+                  <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto py-3 px-1 scrollbar-none">
+                    {products.map((item) => {
+                      const name = pickText(item.name, locale)
+                      const img = ensureTransparentUrl(item.images[0]?.url)
+
+                      return (
+                        <motion.div
+                          key={item._id}
+                          whileHover={{ y: -4, scale: 1.04 }}
+                          onClick={() => onOpenModal(item)}
+                          className="group flex-none flex flex-col items-center gap-1.5 w-28 sm:w-32 cursor-pointer text-center select-none"
+                        >
+                          <div className="relative w-full aspect-square flex items-center justify-center p-2 rounded-md border border-amber-800/40 bg-black/40 group-hover:border-amber-400/60 transition-colors">
+                            {img ? (
+                              <img
+                                src={img}
+                                alt={name}
+                                loading="lazy"
+                                className="max-h-full max-w-full object-contain filter drop-shadow-[0_10px_14px_rgba(0,0,0,0.8)] pointer-events-none"
+                              />
+                            ) : (
+                              <span className="font-display text-xl text-amber-400/40">{name.charAt(0)}</span>
+                            )}
+                          </div>
+                          <span className="line-clamp-1 font-display text-[11px] text-amber-100 group-hover:text-amber-300 transition-colors">
+                            {name}
+                          </span>
+                          <span className="font-mono text-[10px] font-bold text-amber-400">
+                            {formatPrice(item.price, item.currency)}
+                          </span>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
                 ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <span className="font-display text-2xl text-gold/30">{name.charAt(0)}</span>
+                  <div className="py-5 text-center text-amber-400/60 font-sans text-xs">
+                    {locale === 'ar'
+                      ? 'الدرج مفتوح — خصص منتجات (أحذية / عطور) للقسم السفلي لتظهر هنا'
+                      : 'Drawer is open — assign bottom section products to display here'}
                   </div>
                 )}
-                {isActive && <div className="absolute inset-0 bg-amber-400/8 border-b-2 border-amber-400/50" />}
-              </div>
-              <div className="p-1.5 w-full text-center">
-                <p className="line-clamp-1 font-display text-[11px] font-medium text-amber-100/80 group-hover:text-amber-300 transition-colors">{name}</p>
-                <p className="mt-0.5 font-sans text-[10px] text-amber-400">{formatPrice(item.price, item.currency)}</p>
-              </div>
-            </button>
-          )
-        })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-
-      {/* Second shelf board */}
-      <div aria-hidden="true" className="h-2.5 w-full rounded-sm border-t border-amber-500/40 bg-gradient-to-b from-[#4a3520] via-[#3a2a18] to-[#2a1e10] shadow-md" />
     </div>
   )
 }
 
-// ─────────────────────────────────────────────
-// BOTTOM COMPARTMENT (accessories / shoes / perfumes)
-// ─────────────────────────────────────────────
-interface BottomCompartmentProps {
+// ─────────────────────────────────────────────────────────────
+// 3. RIGHT BAY: 5-TIER SHELVING TOWER & STACKED FOLDED CLOTHES
+//    ("katlanmislar isebirbirinin ustunde olacaklar yandan gozukuyor
+//     siradakiler iki uc tanesi katlanmis sekilleri arka plansiz
+//     tiklayinca acilir tiklayincaen asagiya gider")
+// ─────────────────────────────────────────────────────────────
+interface FoldedStackShelfProps {
   products: Product[]
-  onOpen: (product: Product) => void
+  onOpenModal: (product: Product) => void
 }
 
-function BottomCompartment({ products, onOpen }: BottomCompartmentProps) {
+function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
   const { locale } = useApp()
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const x = useMotionValue(0)
-  const springX = useSpring(x, { stiffness: 300, damping: 30 })
+  const [order, setOrder] = useState<number[]>(() => products.map((_, i) => i))
+  const [isUnfolded, setIsUnfolded] = useState(false)
+  const [isSendingToBottom, setIsSendingToBottom] = useState(false)
+
+  useEffect(() => {
+    setOrder(products.map((_, i) => i))
+  }, [products])
+
+  if (products.length === 0) return null
+
+  const activeIdx = order[0] ?? 0
+  const current = products[activeIdx]
+  if (!current) return null
+
+  const name = pickText(current.name, locale)
+  const hasMultiple = products.length > 1
+
+  const foldedUrl = ensureTransparentUrl(current.images[0]?.url)
+  const unfoldedUrl = current.images.length > 1 ? ensureTransparentUrl(current.images[1]?.url) : foldedUrl
+  const canUnfold = current.images.length > 1
+
+  // 2 or 3 items visible underneath in the stack (from the side / depth)
+  const under1 = order.length > 1 ? products[order[1]] : null
+  const under2 = order.length > 2 ? products[order[2]] : null
+  const under3 = order.length > 3 ? products[order[3]] : null
+
+  function handleStackClick() {
+    if (!canUnfold) {
+      if (hasMultiple) {
+        cycleToBottom()
+      } else {
+        onOpenModal(current)
+      }
+      return
+    }
+
+    if (!isUnfolded) {
+      setIsUnfolded(true)
+    } else {
+      cycleToBottom()
+    }
+  }
+
+  function cycleToBottom() {
+    setIsSendingToBottom(true)
+    setIsUnfolded(false)
+    setTimeout(() => {
+      setOrder((prev) => {
+        if (prev.length <= 1) return prev
+        const next = [...prev]
+        const first = next.shift()!
+        next.push(first)
+        return next
+      })
+      setIsSendingToBottom(false)
+    }, 280)
+  }
+
+  function handlePrev() {
+    if (!hasMultiple) return
+    setIsUnfolded(false)
+    setOrder((prev) => {
+      const next = [...prev]
+      const last = next.pop()!
+      next.unshift(last)
+      return next
+    })
+  }
+
+  function handleNext() {
+    if (!hasMultiple) return
+    setIsUnfolded(false)
+    setOrder((prev) => {
+      const next = [...prev]
+      const first = next.shift()!
+      next.push(first)
+      return next
+    })
+  }
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 px-1">
-        <div aria-hidden="true" className="h-px flex-1 bg-amber-800/30" />
-        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-amber-600/50">
-          {locale === 'ar' ? 'الأحذية والإكسسوارات' : locale === 'fr' ? 'Chaussures & Accessoires' : 'Shoes & Accessories'}
+    <div className="relative flex flex-col items-center justify-between h-full w-full select-none">
+      {/* ── Shelf Cubby Header ── */}
+      <div className="flex items-center justify-between w-full px-2 pb-1.5 border-b border-amber-900/40">
+        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-amber-300 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          {locale === 'ar' ? 'رف الملابس المطوية (حزمة)' : 'Folded Boutique Stack'}
         </span>
-        <div aria-hidden="true" className="h-px flex-1 bg-amber-800/30" />
+        {hasMultiple && (
+          <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+            {products.length} {locale === 'ar' ? 'قطع' : 'items'}
+          </span>
+        )}
       </div>
 
-      {/* Floor texture */}
-      <div
-        aria-hidden="true"
-        className="h-1.5 w-full"
-        style={{ background: 'repeating-linear-gradient(90deg, rgba(74,53,32,0.5) 0px, rgba(42,30,16,0.5) 1px, transparent 1px, transparent 24px)' }}
-      />
+      {/* ── Interactive Stacked Garments Area (Card Stack with peeking corners) ── */}
+      <div className="relative w-full flex-1 flex flex-col items-center justify-center min-h-[250px] sm:min-h-[280px] pt-4 overflow-visible">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-4 top-8 h-32 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.18)_0%,transparent_70%)]"
+        />
 
-      {/* Horizontal scroll strip */}
-      <div
-        ref={scrollRef}
-        className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-none"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {products.map((item) => {
-          const name = pickText(item.name, locale)
-          const img = item.images[0]?.url
-          return (
-            <button
-              key={item._id}
-              type="button"
-              onClick={() => onOpen(item)}
-              className="group flex-none flex flex-col items-center gap-1.5 w-24 sm:w-28"
-            >
-              <div className="relative w-full aspect-square rounded-brand border border-amber-900/30 bg-black/20 overflow-hidden group-hover:border-amber-500/40 transition-all">
-                {img ? (
-                  <img src={ensureTransparentUrl(img)} alt={name} loading="lazy" className="h-full w-full object-contain p-1.5 filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300" />
-                ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <span className="font-display text-2xl text-gold/30">{name.charAt(0)}</span>
-                  </div>
+        <div
+          onClick={handleStackClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleStackClick()
+            }
+          }}
+          className="relative z-10 flex flex-col items-center justify-center cursor-pointer w-full focus:outline-none overflow-visible"
+          title={
+            canUnfold
+              ? isUnfolded
+                ? locale === 'ar'
+                  ? 'انقر للطي والإرسال لأسفل الحزمة للانتقال للتالي'
+                  : 'Click to fold & send to bottom of stack'
+                : locale === 'ar'
+                  ? 'انقر لفتح القطعة'
+                  : 'Click to unfold piece'
+              : name
+          }
+        >
+          <div className="relative min-h-[200px] sm:min-h-[230px] w-full flex items-center justify-center px-4 overflow-visible">
+            {/* ── Visual Card Stack Underneath (Next item peeks bottom-RIGHT, after that peeks bottom-LEFT) ── */}
+            {!isUnfolded && (
+              <>
+                {/* 3rd item underneath (centered deep in stack) */}
+                {under3 && (
+                  <motion.div
+                    key={`under3-${under3._id}`}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 0.6, x: 0, y: 26, scale: 0.9, rotate: 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    aria-hidden="true"
+                    className="absolute pointer-events-none z-[1]"
+                  >
+                    <img
+                      src={ensureTransparentUrl(under3.images[0]?.url)}
+                      alt=""
+                      draggable={false}
+                      className="max-h-40 sm:max-h-46 w-auto object-contain filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.8)]"
+                    />
+                  </motion.div>
                 )}
-              </div>
-              <p className="line-clamp-1 font-display text-[10px] text-amber-200/70 group-hover:text-amber-300 text-center transition-colors">{name}</p>
-              <p className="font-mono text-[9px] text-amber-500/70">{formatPrice(item.price, item.currency)}</p>
+
+                {/* 2nd item underneath: Peeks out from bottom-LEFT ("onun sonraki onun altinda soldan kosesi gozuksun") */}
+                {under2 && (
+                  <motion.div
+                    key={`under2-${under2._id}`}
+                    initial={{ opacity: 0, x: -20, y: 10, rotate: -3 }}
+                    animate={{ opacity: 0.92, x: -38, y: 20, rotate: -6, scale: 0.96 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handlePrev()
+                    }}
+                    className="absolute z-[2] cursor-pointer group"
+                    title={pickText(under2.name, locale)}
+                  >
+                    <img
+                      src={ensureTransparentUrl(under2.images[0]?.url)}
+                      alt=""
+                      draggable={false}
+                      className="max-h-44 sm:max-h-50 w-auto object-contain filter drop-shadow-[0_14px_22px_rgba(0,0,0,0.9)] group-hover:scale-105 transition-transform"
+                    />
+                  </motion.div>
+                )}
+
+                {/* 1st item underneath: Peeks out from bottom-RIGHT ("siradaki foto alttan sagdan ... gozuksun") */}
+                {under1 && (
+                  <motion.div
+                    key={`under1-${under1._id}`}
+                    initial={{ opacity: 0, x: 20, y: 8, rotate: 3 }}
+                    animate={{ opacity: 0.96, x: 36, y: 14, rotate: 5.5, scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleNext()
+                    }}
+                    className="absolute z-[5] cursor-pointer group"
+                    title={pickText(under1.name, locale)}
+                  >
+                    <img
+                      src={ensureTransparentUrl(under1.images[0]?.url)}
+                      alt=""
+                      draggable={false}
+                      className="max-h-44 sm:max-h-50 w-auto object-contain filter drop-shadow-[0_14px_22px_rgba(0,0,0,0.88)] group-hover:scale-105 transition-transform"
+                    />
+                  </motion.div>
+                )}
+              </>
+            )}
+
+            {/* Active Top Garment (Centered, Z-Index 20) */}
+            <AnimatePresence mode="wait">
+              {!isUnfolded ? (
+                <motion.div
+                  key={`folded-${current._id}`}
+                  initial={{ opacity: 0, y: isSendingToBottom ? 30 : -15, scale: 0.94 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 35, scale: 0.9 }}
+                  transition={{ type: 'spring', stiffness: 340, damping: 25 }}
+                  className="relative z-20 flex flex-col items-center"
+                >
+                  <img
+                    src={foldedUrl}
+                    alt={name}
+                    loading="lazy"
+                    draggable={false}
+                    className="relative z-10 max-h-44 sm:max-h-52 w-auto object-contain filter drop-shadow-[0_20px_28px_rgba(0,0,0,0.92)] hover:scale-105 transition-transform duration-300 pointer-events-none"
+                  />
+                  <span className="absolute -bottom-2 z-20 rounded-full border border-amber-400/60 bg-black/85 px-3 py-0.5 font-sans text-[10px] uppercase tracking-wider text-amber-300 shadow-md">
+                    {canUnfold
+                      ? locale === 'ar' ? 'انقر لفتح القطعة' : 'Tap to Unfold'
+                      : locale === 'ar' ? 'انقر للتالي' : 'Tap for Next'}
+                  </span>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={`unfolded-${current._id}`}
+                  initial={{ opacity: 0, scale: 0.85, y: 15 }}
+                  animate={{ opacity: 1, scale: 1.05, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.88, y: 30 }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                  className="relative z-30 flex flex-col items-center"
+                >
+                  <img
+                    src={unfoldedUrl}
+                    alt={`${name} unfolded`}
+                    loading="lazy"
+                    draggable={false}
+                    className="relative z-10 max-h-52 sm:max-h-60 w-auto object-contain filter drop-shadow-[0_22px_32px_rgba(212,175,55,0.45)] pointer-events-none"
+                  />
+                  <span className="absolute -bottom-2 z-30 rounded-full border border-amber-400 bg-amber-500/25 px-3 py-0.5 font-sans text-[10px] font-bold uppercase tracking-wider text-amber-200 backdrop-blur-xs shadow-lg animate-pulse">
+                    {locale === 'ar' ? 'طي ونقل لأسفل الحزمة للتالي' : 'Fold and Send to Bottom'}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div
+            aria-hidden="true"
+            className="w-44 sm:w-56 h-3.5 rounded-[50%] bg-black/85 blur-[3px] mt-3 pointer-events-none"
+          />
+        </div>
+      </div>
+
+      {/* Shelf Plank */}
+      <div aria-hidden="true" className="relative w-full mt-1">
+        <div className="h-0.5 w-full bg-gradient-to-r from-amber-700/30 via-amber-400/80 to-amber-700/30" />
+        <div className="h-3 w-full bg-gradient-to-b from-[#3a2717] via-[#281a0e] to-[#150d07] border-t border-amber-500/40 border-b border-black shadow-md" />
+      </div>
+
+      {/* Shelf Placard & Nav Arrows */}
+      <div className="mt-2.5 flex items-center justify-between w-full px-2 gap-2">
+        {hasMultiple && (
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous folded piece"
+            className="w-7 h-7 rounded-full border border-amber-600/40 bg-amber-950/60 hover:bg-amber-600 hover:text-black text-amber-300 flex items-center justify-center transition-colors text-xs font-bold shrink-0"
+          >
+            ←
+          </button>
+        )}
+
+        <div className="text-center flex-1 min-w-0">
+          <Link
+            to={`/product/${current.slug}`}
+            className="font-display text-xs sm:text-sm font-semibold text-amber-100 hover:text-amber-300 transition-colors line-clamp-1"
+          >
+            {name}
+          </Link>
+          <div className="flex items-center justify-center gap-2 mt-0.5">
+            <span className="font-mono text-xs font-bold text-amber-400">
+              {formatPrice(current.price, current.currency)}
+            </span>
+            <span className="text-amber-600 text-xs">•</span>
+            <button
+              type="button"
+              onClick={() => onOpenModal(current)}
+              className="font-sans text-[11px] text-amber-300 hover:text-amber-200 uppercase tracking-widest font-bold underline underline-offset-2"
+            >
+              {locale === 'ar' ? 'عرض التفاصيل' : 'Details'} →
             </button>
-          )
-        })}
+          </div>
+        </div>
+
+        {hasMultiple && (
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next folded piece"
+            className="w-7 h-7 rounded-full border border-amber-600/40 bg-amber-950/60 hover:bg-amber-600 hover:text-black text-amber-300 flex items-center justify-center transition-colors text-xs font-bold shrink-0"
+          >
+            →
+          </button>
+        )}
       </div>
     </div>
   )
 }
 
-// ─────────────────────────────────────────────
-// WARDROBE SCENE (main export)
-// ─────────────────────────────────────────────
+function DecorativeShelfLevel({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div className="flex flex-col justify-between p-2.5 border-b border-amber-900/40 bg-black/20">
+      <div className="flex items-center justify-between">
+        <span className="font-sans text-[10px] uppercase tracking-widest text-amber-400/70">{title}</span>
+        <span className="font-mono text-[9px] text-amber-500/50">{subtitle}</span>
+      </div>
+      <div className="h-6 flex items-center justify-center">
+        <div className="w-16 h-1 rounded-full bg-amber-800/30" />
+      </div>
+      <div aria-hidden="true" className="h-2 w-full bg-gradient-to-b from-[#2e1d13] to-[#1a1009] border-t border-amber-600/30 rounded-xs" />
+    </div>
+  )
+}
 
-/**
- * WardrobeScene — 3-compartment luxury gentleman's wardrobe.
- *
- * Architecture:
- * - Dual wooden doors swing open on mount.
- * - TOP SECTION: Brass hanging rod with garment carousel (wardrobeSection === 'hanging' || unset).
- * - MIDDLE SECTION: Folded shelf display (wardrobeSection === 'folded').
- * - BOTTOM SECTION: Shoes/accessories horizontal strip (wardrobeSection === 'bottom').
- * - Products without wardrobeSection all appear in hanging rod.
- */
+// ─────────────────────────────────────────────────────────────
+// WARDROBE SCENE (Main Storefront Component — 2-Bay Architectural Layout)
+// ─────────────────────────────────────────────────────────────
 export function WardrobeScene({ products, intensity }: SceneProps) {
   const { t, locale } = useApp()
   const isRtl = LOCALE_DIRECTION[locale] === 'rtl'
@@ -391,14 +780,14 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
   const [doorsOpen, setDoorsOpen] = useState(false)
   const animated = intensity !== 'low'
 
-  // Group products by wardrobeSection
-  const hangingProducts = products.filter(
-    (p) => !p.wardrobeSection || p.wardrobeSection === 'hanging',
-  )
   const foldedProducts = products.filter((p) => p.wardrobeSection === 'folded')
   const bottomProducts = products.filter((p) => p.wardrobeSection === 'bottom')
+  const hangingProducts = products.filter(
+    (p) =>
+      p.wardrobeSection === 'hanging' ||
+      (!p.wardrobeSection && p.wardrobeSection !== 'folded' && p.wardrobeSection !== 'bottom'),
+  )
 
-  // Open doors on mount
   useEffect(() => {
     const timer = setTimeout(() => setDoorsOpen(true), 120)
     return () => clearTimeout(timer)
@@ -408,87 +797,123 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
 
   return (
     <section
-      className="relative w-full overflow-hidden rounded-2xl border-4 border-amber-950/40 bg-[#16110c] shadow-2xl [perspective:1400px]"
-      aria-label="Wardrobe collection showcase"
+      className="relative w-full overflow-hidden rounded-2xl border-4 border-amber-950/80 bg-[#120e0a] shadow-[0_30px_70px_rgba(0,0,0,0.95)] [perspective:1400px]"
+      aria-label="Classy Men Royal Wardrobe Showcase"
     >
-      {/* ── INTERIOR AMBIENT GLOW ── */}
+      {/* ── Interior Ambient Spotlights ── */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_25%,rgba(212,175,55,0.13),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.18),transparent_65%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_80%_35%,rgba(212,175,55,0.14),transparent_55%)]"
       />
 
-      {/* ── WARDROBE DOORS ── */}
+      {/* ── 3D Dual Smoked Oak Wardrobe Doors ── */}
       {animated && (
         <>
           {/* Left Door */}
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 start-0 z-30 w-1/2 border-e border-amber-950/70 bg-gradient-to-b from-[#2e2016] via-[#1e160e] to-[#13100a] shadow-2xl"
+            className="pointer-events-none absolute inset-y-0 start-0 z-40 w-1/2 border-e-2 border-amber-950 bg-gradient-to-b from-[#2e1d13] via-[#1f140c] to-[#120c07] shadow-2xl overflow-hidden"
             style={{ transformOrigin: isRtl ? 'right center' : 'left center', backfaceVisibility: 'hidden' }}
             initial={{ rotateY: 0 }}
             animate={{ rotateY: doorsOpen ? (isRtl ? 108 : -108) : 0 }}
             transition={DOOR_SPRING}
           >
-            <div className="absolute inset-4 rounded border border-amber-600/20 bg-black/10" />
-            {/* Wood grain lines */}
-            <div className="absolute inset-6 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(180deg, transparent, transparent 18px, rgba(212,175,55,0.3) 18px, rgba(212,175,55,0.3) 19px)' }} />
-            <div className="absolute end-3 top-1/2 -translate-y-1/2 h-14 w-1.5 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-md" />
+            <div className="absolute inset-5 rounded border border-amber-500/25 bg-black/20" />
+            <div
+              className="absolute inset-8 opacity-10"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(180deg, transparent, transparent 16px, rgba(212,175,55,0.4) 16px, rgba(212,175,55,0.4) 17px)',
+              }}
+            />
+            <div className="absolute end-4 top-1/2 -translate-y-1/2 h-16 w-2 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 shadow-lg" />
           </motion.div>
 
           {/* Right Door */}
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 end-0 z-30 w-1/2 border-s border-amber-950/70 bg-gradient-to-b from-[#2e2016] via-[#1e160e] to-[#13100a] shadow-2xl"
+            className="pointer-events-none absolute inset-y-0 end-0 z-40 w-1/2 border-s-2 border-amber-950 bg-gradient-to-b from-[#2e1d13] via-[#1f140c] to-[#120c07] shadow-2xl overflow-hidden"
             style={{ transformOrigin: isRtl ? 'left center' : 'right center', backfaceVisibility: 'hidden' }}
             initial={{ rotateY: 0 }}
             animate={{ rotateY: doorsOpen ? (isRtl ? -108 : 108) : 0 }}
             transition={DOOR_SPRING}
           >
-            <div className="absolute inset-4 rounded border border-amber-600/20 bg-black/10" />
-            <div className="absolute inset-6 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(180deg, transparent, transparent 18px, rgba(212,175,55,0.3) 18px, rgba(212,175,55,0.3) 19px)' }} />
-            <div className="absolute start-3 top-1/2 -translate-y-1/2 h-14 w-1.5 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-md" />
+            <div className="absolute inset-5 rounded border border-amber-500/25 bg-black/20" />
+            <div
+              className="absolute inset-8 opacity-10"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(180deg, transparent, transparent 16px, rgba(212,175,55,0.4) 16px, rgba(212,175,55,0.4) 17px)',
+              }}
+            />
+            <div className="absolute start-4 top-1/2 -translate-y-1/2 h-16 w-2 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 shadow-lg" />
           </motion.div>
         </>
       )}
 
-      {/* ── INTERIOR CONTENT ── */}
-      <div className="relative z-10 py-8 sm:py-10 px-4 sm:px-6 space-y-5">
-
-        {/* TOP BADGE */}
+      {/* ── WARDROBE INTERIOR ── */}
+      <div className="relative z-10 py-7 sm:py-9 px-4 sm:px-8 space-y-6">
+        {/* Royal Wardrobe Badge */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-1 font-sans text-xs uppercase tracking-[0.25em] text-amber-200/90">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-            {t('rail.badge')}
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-1.5 font-sans text-xs uppercase tracking-[0.25em] text-amber-200/95 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+            {locale === 'ar' ? 'خزانة ملابس كلاسي ريم الملكية' : locale === 'fr' ? 'Garde-Robe Royale Classy Men' : 'Classy Men Royal Wardrobe'}
           </span>
         </div>
 
-        {/* ── HANGING ROD SECTION ── */}
-        {hangingProducts.length > 0 && (
-          <HangingCompartment products={hangingProducts} onOpen={setSelectedProduct} />
-        )}
+        {/* ── ARCHITECTURAL CLOSET (Matching Reference Photo) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch rounded-xl border border-amber-900/50 bg-[#16110c]/85 shadow-2xl overflow-hidden">
+          {/* ── LEFT BAY (7/12): Hanging Rod Bay + Single Large Openable Drawer Chest ── */}
+          <div className="lg:col-span-7 p-4 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-e border-amber-900/50">
+            {/* Top Hanging Rod with RailScene-like carousel */}
+            <HangingBay products={hangingProducts} onOpen={setSelectedProduct} isRtl={isRtl} />
 
-        {/* ── FOLDED SHELF SECTION ── */}
-        {foldedProducts.length > 0 && (
-          <FoldedShelf products={foldedProducts} onOpen={setSelectedProduct} />
-        )}
+            {/* Bottom Single Large Drawer Unit */}
+            <SingleLargeDrawer products={bottomProducts} onOpenModal={setSelectedProduct} />
+          </div>
 
-        {/* ── BOTTOM COMPARTMENT SECTION ── */}
-        {bottomProducts.length > 0 && (
-          <BottomCompartment products={bottomProducts} onOpen={setSelectedProduct} />
-        )}
+          {/* ── RIGHT BAY (5/12): 5-Tier Shelving Tower with Stacked Folded Clothes ── */}
+          <div className="lg:col-span-5 p-4 sm:p-6 flex flex-col justify-between bg-[#140e09]/70">
+            {/* Top Decorative Cubby (Level 1) */}
+            <DecorativeShelfLevel
+              title={locale === 'ar' ? 'الرف العلوي' : 'Top Shelf'}
+              subtitle="Atelier Archive"
+            />
+
+            {/* Folded Clothes Stack (Level 2/3) */}
+            <div className="my-2 flex-1 flex flex-col justify-center">
+              <FoldedStackShelf products={foldedProducts} onOpenModal={setSelectedProduct} />
+            </div>
+
+            {/* Lower Decorative Cubby (Level 4/5) */}
+            <DecorativeShelfLevel
+              title={locale === 'ar' ? 'الرف السفلي' : 'Lower Cubby'}
+              subtitle="Luxury Knitwear"
+            />
+          </div>
+        </div>
 
         {/* ── FOOTER BAR ── */}
-        <div className="border-t border-amber-800/30 pt-5 px-2">
+        <div className="border-t border-amber-900/40 pt-4 px-2">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start">
-            <div className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/5 px-4 py-1.5 font-sans text-xs text-amber-200/70">
+            <div className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/5 px-4 py-1.5 font-sans text-xs text-amber-200/80">
               <svg className="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.75"
+                  d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+                />
               </svg>
               <span>{t('rail.instruction')}</span>
             </div>
             <Link
               to="/catalog"
-              className="inline-flex items-center gap-2 rounded-brand border border-amber-500/50 bg-amber-500/10 px-4 py-2 font-sans text-xs uppercase tracking-[0.2em] font-bold text-amber-300 hover:bg-amber-500 hover:text-black transition-all"
+              className="inline-flex items-center gap-2 rounded-brand border border-amber-500/50 bg-amber-500/10 px-5 py-2 font-sans text-xs uppercase tracking-[0.2em] font-bold text-amber-300 hover:bg-amber-500 hover:text-black transition-all"
             >
               <span>{t('rail.shopCollection')}</span>
               <span className="rtl:rotate-180">→</span>

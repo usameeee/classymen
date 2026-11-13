@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { DEFAULT_DISPLAY_STYLE } from '@shared/constants/displayStyles'
 import { useApp } from '../app/useApp'
 import { fetchCategories, fetchCategory, fetchProducts } from '../lib/catalog'
 import type { Category, Product } from '../lib/catalog'
 import { pickText } from '../lib/localized'
-import { SceneRenderer } from '../scenes/SceneRenderer'
+import { GridCleanScene } from '../scenes/GridCleanScene'
 import { DressingRoomModal } from '../components/dressing-room/DressingRoomModal'
 import { SeoHead } from '../components/seo/SeoHead'
 
@@ -157,10 +156,7 @@ export function CategoryPage() {
             {products.length === 0 ? (
               <p className="font-sans text-sm text-ink/60">{t('category.empty')}</p>
             ) : (
-              <SceneRenderer
-                style={category.displayStyle ?? DEFAULT_DISPLAY_STYLE}
-                products={products}
-              />
+              <GridCleanScene products={products} intensity="off" />
             )}
           </div>
 

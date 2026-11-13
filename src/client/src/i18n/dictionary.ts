@@ -191,7 +191,7 @@ export const MESSAGES = {
     'admin.noSizesInSearch': 'لم يتم العثور على مقاسات مطابقة.',
     'admin.addToProduct': '+ إضافة للمنتج',
     'admin.previewScene': 'معاينة في المشهد',
-    'admin.previewHint': 'شاهد المنتج في مشهد الفئة قبل الحفظ',
+    'admin.previewHint': 'شاهد المنتج في مشهد العرض قبل الحفظ',
     'admin.bgRemoval': 'إزالة الخلفية تلقائياً (AI)',
     'admin.saveAndPublish': 'حفظ ونشر',
     'admin.previewEmpty': 'اختر صنفاً لمعاينة المشهد',

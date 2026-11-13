@@ -24,7 +24,7 @@ export function Stage3dScene({ products }: SceneProps) {
         _id: firstCat._id,
         slug: firstCat.slug ?? 'catalog',
         name: firstCat.name,
-        description: firstCat.description,
+        description: 'description' in firstCat ? (firstCat as { description?: typeof firstCat.name }).description : undefined,
       }
     : {
         _id: 'featured',

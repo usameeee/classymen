@@ -13,9 +13,11 @@ import type { SceneProps } from './sceneIntensity'
 function ensureTransparentUrl(url?: string): string {
   if (!url) return ''
   if (url.includes('cloudinary.com') && url.includes('/image/upload/')) {
-    if (!url.includes('e_make_transparent')) {
-      return url.replace('/image/upload/', '/image/upload/e_make_transparent:20,e_trim,f_auto,q_auto/')
+    let clean = url.replace(/\.(jpg|jpeg)$/i, '.png')
+    if (!clean.includes('e_make_transparent')) {
+      clean = clean.replace('/image/upload/', '/image/upload/e_make_transparent:35,e_trim,f_png/')
     }
+    return clean
   }
   return url
 }

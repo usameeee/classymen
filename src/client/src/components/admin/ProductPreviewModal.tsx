@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import type { DisplayStyle } from '@shared/constants/displayStyles'
+import type { WardrobeSection } from '@shared/schemas/product.schema'
 import { useApp } from '../../app/useApp'
 import { SceneRenderer } from '../../scenes/SceneRenderer'
 import { Stage3dShowcase } from '../showcase/Stage3dShowcase'
@@ -18,6 +20,8 @@ interface ProductPreviewModalProps {
     sizes: string[]
     images: ProductImageAsset[]
     isFeatured: boolean
+    displayStyle?: DisplayStyle
+    wardrobeSection?: WardrobeSection
     isMadeToMeasure: boolean
     stock: number
     tags: string[]
@@ -28,6 +32,10 @@ interface ProductPreviewModalProps {
 
 /** Builds a synthetic Product object from draft form data for preview purposes. */
 function buildPreviewProduct(draft: ProductPreviewModalProps['draft'], category: Category): Product {
+  const effectiveDisplayStyle: DisplayStyle = draft.isFeatured && draft.displayStyle
+    ? draft.displayStyle
+    : 'grid-clean'
+
   return {
     _id: '__preview__',
     slug: '__preview__',
@@ -37,7 +45,6 @@ function buildPreviewProduct(draft: ProductPreviewModalProps['draft'], category:
       _id: category._id,
       slug: category.slug,
       name: category.name,
-      displayStyle: category.displayStyle,
     },
     price: draft.price,
     currency: draft.currency,
@@ -48,6 +55,8 @@ function buildPreviewProduct(draft: ProductPreviewModalProps['draft'], category:
     tags: draft.tags,
     isActive: true,
     isFeatured: draft.isFeatured,
+    displayStyle: effectiveDisplayStyle,
+    wardrobeSection: draft.wardrobeSection,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }
@@ -94,7 +103,14 @@ export function ProductPreviewModal({
     ? [buildPreviewProduct(draft, category)]
     : []
 
-  const styleName = category?.displayStyle ?? 'grid-clean'
+  const effectiveDisplayStyle: DisplayStyle =
+    draft.isFeatured && draft.displayStyle
+      ? draft.displayStyle
+      : draft.isFeatured
+        ? (category?.slug?.includes('parfum') || draft.name.ar.includes('عطر') ? 'stage-3d' : 'rail')
+        : 'grid-clean'
+
+  const styleName = effectiveDisplayStyle
 
   return (
     <div
@@ -227,10 +243,10 @@ export function ProductPreviewModal({
                 products={previewProducts}
               />
             ) : (
-              <section className="relative w-full py-16 bg-cream">
+              <section className="relative w-full py-16 bg-cream dark:bg-ink">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                   <SceneRenderer
-                    style={category.displayStyle}
+                    style={effectiveDisplayStyle}
                     products={previewProducts}
                     intensity="medium"
                   />

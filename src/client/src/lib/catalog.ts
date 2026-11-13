@@ -35,7 +35,8 @@ export interface CategorySummary {
   _id: string
   slug: string
   name: LocalizedText
-  displayStyle: DisplayStyle
+  description?: LocalizedText
+  displayStyle?: DisplayStyle
 }
 
 export interface Category extends CategorySummary {

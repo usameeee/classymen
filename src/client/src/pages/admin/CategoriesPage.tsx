@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useApp } from '../../app/useApp'
-import { getDisplayStyleLabel } from '@shared/constants/displayStyles'
 import { deleteCategory, fetchCategories } from '../../lib/catalog'
 import type { Category } from '../../lib/catalog'
 
 export function CategoriesPage() {
-  const { locale } = useApp()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -46,7 +43,7 @@ export function CategoriesPage() {
         <div>
           <h1 className="font-display text-3xl text-ink">Categories</h1>
           <p className="mt-1 font-sans text-sm text-ink/70">
-            Storefront sections and their interactive display style.
+            Storefront product categories and collection taxonomy.
           </p>
         </div>
         <Link
@@ -70,7 +67,6 @@ export function CategoriesPage() {
               <th className="px-4 py-3 font-normal">Name (ar)</th>
               <th className="px-4 py-3 font-normal">Parent</th>
               <th className="px-4 py-3 font-normal">Slug</th>
-              <th className="px-4 py-3 font-normal">Display</th>
               <th className="px-4 py-3 font-normal">Order</th>
               <th className="px-4 py-3 font-normal">Status</th>
               <th className="px-4 py-3 font-normal">Actions</th>
@@ -79,7 +75,7 @@ export function CategoriesPage() {
           <tbody>
             {loading && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 font-sans text-sm text-ink/60">
+                <td colSpan={6} className="px-4 py-6 font-sans text-sm text-ink/60">
                   Loading
                 </td>
               </tr>
@@ -87,7 +83,7 @@ export function CategoriesPage() {
 
             {!loading && categories.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 font-sans text-sm text-ink/60">
+                <td colSpan={6} className="px-4 py-6 font-sans text-sm text-ink/60">
                   No categories yet.
                 </td>
               </tr>
@@ -114,9 +110,6 @@ export function CategoriesPage() {
                   )}
                 </td>
                 <td className="px-4 py-3 font-sans text-sm text-ink/70">{category.slug}</td>
-                <td className="px-4 py-3 font-sans text-sm text-ink/70">
-                  {getDisplayStyleLabel(category.displayStyle, locale)}
-                </td>
                 <td className="px-4 py-3 font-sans text-sm text-ink/70">{category.order}</td>
                 <td className="px-4 py-3 font-sans text-sm">
                   <span className={category.isActive ? 'text-gold' : 'text-ink/50'}>

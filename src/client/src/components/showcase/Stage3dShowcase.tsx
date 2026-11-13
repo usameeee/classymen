@@ -6,7 +6,7 @@ import { useCart } from '../../app/useCart'
 import { useToast } from '../../app/useToast'
 import { pickText } from '../../lib/localized'
 import { formatPrice } from '../catalog/ProductCard'
-import type { Category, Product, ProductImageAsset } from '../../lib/catalog'
+import type { Category, CategorySummary, LocalizedText, Product, ProductImageAsset } from '../../lib/catalog'
 
 interface Stage3dShowcaseProps {
   category?: Category | CategorySummary | { _id?: string; slug?: string; name: LocalizedText; description?: LocalizedText }
