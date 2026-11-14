@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { LOCALE_DIRECTION } from '@shared/constants/locales'
@@ -356,9 +356,19 @@ interface SingleLargeDrawerProps {
 
 function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
   const { locale } = useApp()
+  const isRtl = LOCALE_DIRECTION[locale] === 'rtl'
   const [isOpen, setIsOpen] = useState(false)
   const [activeItemId, setActiveItemId] = useState<string | null>(null)
   const [activeAngleIdx, setActiveAngleIdx] = useState(0)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const isScrollable = products.length >= 4
+
+  function handleScroll(direction: 'left' | 'right') {
+    if (!scrollRef.current) return
+    const offset = direction === 'left' ? -260 : 260
+    scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' })
+  }
 
   function handleProductClick(product: Product) {
     if (activeItemId === product._id) {
@@ -464,7 +474,26 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                 {/* Products Lined Up Side-by-Side (Border-free & Constrained) */}
                 {hasProducts ? (
                   <div className="relative pt-2 pb-2">
-                    <div className="flex items-end justify-center gap-6 sm:gap-10 overflow-x-auto pb-3 pt-6 px-2 scrollbar-none max-w-2xl mx-auto">
+                    {/* Left Scroll Arrow (Visible when >= 4 products) */}
+                    {isScrollable && (
+                      <button
+                        type="button"
+                        onClick={() => handleScroll(isRtl ? 'right' : 'left')}
+                        aria-label="Scroll drawer left"
+                        className="absolute start-1 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full border border-amber-500/50 bg-black/85 text-amber-300 hover:bg-amber-500 hover:text-black flex items-center justify-center transition-all shadow-lg backdrop-blur-xs cursor-pointer active:scale-95"
+                      >
+                        <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                    )}
+
+                    <div
+                      ref={scrollRef}
+                      className={`flex items-end gap-6 sm:gap-10 overflow-x-auto pb-3 pt-6 scrollbar-none ${
+                        isScrollable ? 'justify-start px-10' : 'justify-center max-w-2xl mx-auto px-2'
+                      }`}
+                    >
                       {products.map((item) => {
                         const name = pickText(item.name, locale)
                         const isLifted = activeItemId === item._id
@@ -598,6 +627,20 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                         )
                       })}
                     </div>
+
+                    {/* Right Scroll Arrow (Visible when >= 4 products) */}
+                    {isScrollable && (
+                      <button
+                        type="button"
+                        onClick={() => handleScroll(isRtl ? 'left' : 'right')}
+                        aria-label="Scroll drawer right"
+                        className="absolute end-1 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full border border-amber-500/50 bg-black/85 text-amber-300 hover:bg-amber-500 hover:text-black flex items-center justify-center transition-all shadow-lg backdrop-blur-xs cursor-pointer active:scale-95"
+                      >
+                        <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="py-6 text-center text-amber-400/60 font-sans text-xs">
