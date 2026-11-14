@@ -371,16 +371,13 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
         setActiveAngleIdx(0)
       }
     } else {
-      // Lift new item into spotlight
+      // Lift new item into focus
       setActiveItemId(product._id)
       setActiveAngleIdx(0)
     }
   }
 
-  // Determine complementary slots to display when fewer than 3 products are in drawer
   const hasProducts = products.length > 0
-  const showFragranceSlot = products.length < 2
-  const showValetSlot = products.length < 3
 
   return (
     <div className="relative w-full mt-4 select-none">
@@ -394,7 +391,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
             <span className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300">
-              {locale === 'ar' ? 'الدرج الكبير للأحذية والعطور' : locale === 'fr' ? 'Grand Tiroir Chaussures & Parfums' : 'Large Boutique Drawer'}
+              {locale === 'ar' ? 'الدرج السفلي' : locale === 'fr' ? 'Tiroir Inférieur' : 'Bottom Drawer'}
             </span>
             {hasProducts && (
               <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
@@ -447,7 +444,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
             </span>
           </div>
 
-          {/* ── Pulled-Out Luxury Velvet Drawer Tray (Authentic 3D Depth) ── */}
+          {/* ── Pulled-Out Luxury Drawer Tray ── */}
           <AnimatePresence>
             {isOpen && (
               <motion.div
@@ -464,238 +461,151 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                 {/* Interior LED Strip Warm Ambient Glow */}
                 <div aria-hidden="true" className="h-0.5 w-full bg-gradient-to-r from-transparent via-amber-300/80 to-transparent blur-[1px] mb-2" />
 
-                {/* Drawer Interior Subheader */}
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-900/50">
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                    <span className="font-sans text-[10px] font-semibold uppercase tracking-widest text-amber-300/90">
-                      {locale === 'ar'
-                        ? 'منظم الدرج الفاخر — انقر على أي قطعة لرفعها وفحص زواياها'
-                        : 'Boutique Valet Tray — Tap any piece to lift & inspect angles'}
-                    </span>
-                  </div>
-                  <span className="font-mono text-[9px] text-amber-500/60 uppercase tracking-widest">
-                    Atelier Organizer
-                  </span>
-                </div>
+                {/* Products Lined Up Side-by-Side (Border-free & Constrained) */}
+                {hasProducts ? (
+                  <div className="relative pt-2 pb-2">
+                    <div className="flex items-end justify-center gap-6 sm:gap-10 overflow-x-auto pb-3 pt-6 px-2 scrollbar-none max-w-2xl mx-auto">
+                      {products.map((item) => {
+                        const name = pickText(item.name, locale)
+                        const isLifted = activeItemId === item._id
+                        const hasDetail = item.images.length > 1
+                        const safeAngle = activeAngleIdx < item.images.length ? activeAngleIdx : 0
+                        const currentImg = ensureTransparentUrl(item.images[safeAngle]?.url || item.images[0]?.url)
 
-                {/* ── Natural Centered Boutique Organizer Layout ── */}
-                <div className="relative pt-3 pb-2">
-                  <div className="flex items-end justify-center gap-3 sm:gap-5 overflow-x-auto pb-3 pt-6 px-1 scrollbar-none">
-                    {/* Render Assigned Drawer Products in Custom Velvet Compartments */}
-                    {products.map((item) => {
-                      const name = pickText(item.name, locale)
-                      const isLifted = activeItemId === item._id
-                      const hasDetail = item.images.length > 1
-                      const safeAngle = activeAngleIdx < item.images.length ? activeAngleIdx : 0
-                      const currentImg = ensureTransparentUrl(item.images[safeAngle]?.url || item.images[0]?.url)
-
-                      return (
-                        <div
-                          key={item._id}
-                          className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none"
-                        >
-                          {/* ── Recessed Velvet Slot Cushion (The physical compartment) ── */}
+                        return (
                           <div
+                            key={item._id}
+                            className="relative flex-none flex flex-col items-center w-36 sm:w-44 select-none cursor-pointer group"
                             onClick={() => handleProductClick(item)}
-                            role="button"
-                            tabIndex={0}
-                            className={`relative w-full h-36 sm:h-40 rounded-lg border cursor-pointer transition-all duration-300 flex items-center justify-center p-2 ${
-                              isLifted
-                                ? 'border-amber-400 bg-gradient-to-b from-amber-950/50 via-[#180f08] to-black/95 shadow-[inset_0_4px_18px_rgba(0,0,0,0.95),0_0_20px_rgba(212,175,55,0.3)]'
-                                : 'border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] hover:border-amber-600/60'
-                            }`}
                           >
-                            {/* Velvet cushion perimeter stitch */}
-                            <div
-                              aria-hidden="true"
-                              className="absolute inset-1.5 rounded border border-amber-900/25 pointer-events-none"
-                            />
+                            {/* Product Presentation Stage (BORDER-FREE) */}
+                            <div className="relative w-full h-36 sm:h-40 flex items-center justify-center">
+                              {/* Soft Natural Floor Contact Shadow */}
+                              <div
+                                aria-hidden="true"
+                                className={`absolute bottom-2 w-28 sm:w-36 h-3 rounded-[50%] bg-black/95 blur-[3px] transition-all duration-300 pointer-events-none ${
+                                  isLifted ? 'scale-70 opacity-35' : 'scale-100 opacity-85'
+                                }`}
+                              />
 
-                            {/* Warm Golden Spotlight on Slot Floor when Lifted */}
+                              {/* Elevated Product */}
+                              <motion.div
+                                animate={
+                                  isLifted
+                                    ? { y: -32, scale: 1.18 }
+                                    : { y: 0, scale: 1 }
+                                }
+                                transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+                                className="relative z-20 flex flex-col items-center justify-center w-full h-full"
+                              >
+                                <AnimatePresence mode="wait">
+                                  {currentImg ? (
+                                    <motion.img
+                                      key={`${item._id}-${safeAngle}`}
+                                      src={currentImg}
+                                      alt={name}
+                                      loading="lazy"
+                                      initial={{ opacity: 0, rotateY: 70, scale: 0.95 }}
+                                      animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                                      exit={{ opacity: 0, rotateY: -70, scale: 0.95 }}
+                                      transition={{ duration: 0.22 }}
+                                      className={`max-h-full max-w-full object-contain filter pointer-events-none transition-all duration-300 ${
+                                        isLifted
+                                          ? 'drop-shadow-[0_22px_28px_rgba(0,0,0,0.95)] drop-shadow-[0_0_15px_rgba(212,175,55,0.45)]'
+                                          : 'drop-shadow-[0_8px_14px_rgba(0,0,0,0.85)] group-hover:scale-105'
+                                      }`}
+                                    />
+                                  ) : (
+                                    <span className="font-display text-2xl text-amber-400/40">{name.charAt(0)}</span>
+                                  )}
+                                </AnimatePresence>
+
+                                {/* Multi-Angle Switcher Pill Bar when Lifted */}
+                                {isLifted && hasDetail && (
+                                  <motion.div
+                                    initial={{ opacity: 0, y: -6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="absolute -top-7 z-30 flex items-center gap-1 bg-black/95 border border-amber-400/70 rounded-full px-2 py-0.5 shadow-lg backdrop-blur-xs whitespace-nowrap"
+                                  >
+                                    {item.images.map((_, imgIdx) => (
+                                      <button
+                                        key={imgIdx}
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          setActiveAngleIdx(imgIdx)
+                                        }}
+                                        className={`px-2 py-0.5 rounded-full text-[9px] font-sans font-bold transition-all cursor-pointer ${
+                                          safeAngle === imgIdx
+                                            ? 'bg-amber-400 text-black shadow-xs'
+                                            : 'text-amber-300/80 hover:text-amber-100'
+                                        }`}
+                                      >
+                                        {imgIdx === 0
+                                          ? (locale === 'ar' ? 'جانبي' : 'Hero')
+                                          : imgIdx === 1
+                                          ? (locale === 'ar' ? 'تفاصيل / كعب' : 'Detail')
+                                          : `${imgIdx + 1}`}
+                                      </button>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </motion.div>
+                            </div>
+
+                            {/* Label & Price */}
+                            <div className="mt-2 text-center w-full px-1">
+                              <span className="line-clamp-1 font-display text-xs text-amber-100 font-medium">
+                                {name}
+                              </span>
+                              <span className="font-mono text-[11px] font-bold text-amber-400 mt-0.5 block">
+                                {formatPrice(item.price, item.currency)}
+                              </span>
+                            </div>
+
+                            {/* In-Drawer Action Bar when Lifted */}
                             {isLifted && (
                               <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="absolute inset-0 rounded-lg pointer-events-none bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.45)_0%,rgba(212,175,55,0.08)_55%,transparent_75%)]"
-                              />
-                            )}
-
-                            {/* Soft Contact Floor Shadow */}
-                            <div
-                              aria-hidden="true"
-                              className={`absolute bottom-3 w-20 sm:w-24 h-2.5 rounded-[50%] bg-black/95 blur-[2.5px] transition-all duration-300 pointer-events-none ${
-                                isLifted ? 'scale-65 opacity-35' : 'scale-100 opacity-90'
-                              }`}
-                            />
-
-                            {/* ── The Elevated Product (Smooth lift out of drawer on click!) ── */}
-                            <motion.div
-                              animate={
-                                isLifted
-                                  ? { y: -38, scale: 1.22, rotate: 0 }
-                                  : { y: 0, scale: 1, rotate: 0 }
-                              }
-                              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                              className="relative z-20 flex flex-col items-center justify-center w-full h-full"
-                            >
-                              <AnimatePresence mode="wait">
-                                {currentImg ? (
-                                  <motion.img
-                                    key={`${item._id}-${safeAngle}`}
-                                    src={currentImg}
-                                    alt={name}
-                                    loading="lazy"
-                                    initial={{ opacity: 0, rotateY: 70, scale: 0.95 }}
-                                    animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-                                    exit={{ opacity: 0, rotateY: -70, scale: 0.95 }}
-                                    transition={{ duration: 0.22 }}
-                                    className={`max-h-full max-w-full object-contain filter pointer-events-none transition-all duration-300 ${
-                                      isLifted
-                                        ? 'drop-shadow-[0_24px_30px_rgba(0,0,0,0.95)] drop-shadow-[0_0_14px_rgba(212,175,55,0.4)]'
-                                        : 'drop-shadow-[0_8px_14px_rgba(0,0,0,0.85)] group-hover:scale-105'
-                                    }`}
-                                  />
-                                ) : (
-                                  <span className="font-display text-2xl text-amber-400/40">{name.charAt(0)}</span>
-                                )}
-                              </AnimatePresence>
-
-                              {/* Multi-Angle Switcher Pill Bar when Lifted */}
-                              {isLifted && hasDetail && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: -6 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="absolute -top-7 z-30 flex items-center gap-1 bg-black/95 border border-amber-400/70 rounded-full px-2 py-0.5 shadow-lg backdrop-blur-xs whitespace-nowrap"
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mt-1.5 flex items-center justify-center gap-2 w-full"
+                              >
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    onOpenModal(item)
+                                  }}
+                                  className="font-sans text-[10px] font-bold uppercase tracking-wider text-amber-300 hover:text-amber-100 underline underline-offset-2 cursor-pointer"
                                 >
-                                  {item.images.map((_, imgIdx) => (
-                                    <button
-                                      key={imgIdx}
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        setActiveAngleIdx(imgIdx)
-                                      }}
-                                      className={`px-2 py-0.5 rounded-full text-[9px] font-sans font-bold transition-all cursor-pointer ${
-                                        safeAngle === imgIdx
-                                          ? 'bg-amber-400 text-black shadow-xs'
-                                          : 'text-amber-300/80 hover:text-amber-100'
-                                      }`}
-                                    >
-                                      {imgIdx === 0
-                                        ? (locale === 'ar' ? 'جانبي' : 'Hero')
-                                        : imgIdx === 1
-                                        ? (locale === 'ar' ? 'تفاصيل / كعب' : 'Detail')
-                                        : `${imgIdx + 1}`}
-                                    </button>
-                                  ))}
-                                </motion.div>
-                              )}
-                            </motion.div>
+                                  {locale === 'ar' ? 'عرض التفاصيل' : 'Details'} →
+                                </button>
+                                <span className="text-amber-700 text-xs">•</span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setActiveItemId(null)
+                                    setActiveAngleIdx(0)
+                                  }}
+                                  className="font-sans text-[10px] font-medium text-amber-500/80 hover:text-amber-300 cursor-pointer"
+                                >
+                                  {locale === 'ar' ? 'إعادة للدرج' : 'Return'}
+                                </button>
+                              </motion.div>
+                            )}
                           </div>
-
-                          {/* Label & Price Below Slot */}
-                          <div className="mt-2 text-center w-full px-1">
-                            <span className="line-clamp-1 font-display text-xs text-amber-100 font-medium">
-                              {name}
-                            </span>
-                            <span className="font-mono text-[11px] font-bold text-amber-400 mt-0.5 block">
-                              {formatPrice(item.price, item.currency)}
-                            </span>
-                          </div>
-
-                          {/* In-Drawer Inspection Action Bar */}
-                          {isLifted && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 4 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="mt-1.5 flex items-center justify-center gap-2 w-full"
-                            >
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  onOpenModal(item)
-                                }}
-                                className="font-sans text-[10px] font-bold uppercase tracking-wider text-amber-300 hover:text-amber-100 underline underline-offset-2 cursor-pointer"
-                              >
-                                {locale === 'ar' ? 'عرض التفاصيل' : 'Details'} →
-                              </button>
-                              <span className="text-amber-700 text-xs">•</span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setActiveItemId(null)
-                                  setActiveAngleIdx(0)
-                                }}
-                                className="font-sans text-[10px] font-medium text-amber-500/80 hover:text-amber-300 cursor-pointer"
-                              >
-                                {locale === 'ar' ? 'إعادة للدرج' : 'Return'}
-                              </button>
-                            </motion.div>
-                          )}
-                        </div>
-                      )
-                    })}
-
-                    {/* ── Complementary Haute Parfumerie Bay (When fewer than 2 items) ── */}
-                    {showFragranceSlot && (
-                      <div className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none opacity-85">
-                        <div className="relative w-full h-36 sm:h-40 rounded-lg border border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center p-3">
-                          <div aria-hidden="true" className="absolute inset-1.5 rounded border border-amber-900/20 pointer-events-none" />
-                          <svg className="w-9 h-14 text-amber-500/45 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]" viewBox="0 0 40 64" fill="none">
-                            <rect x="15" y="4" width="10" height="8" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                            <rect x="18" y="0" width="4" height="4" fill="currentColor" />
-                            <path d="M 8 16 C 8 13 12 12 20 12 C 28 12 32 13 32 16 L 35 56 C 35 60 31 62 20 62 C 9 62 5 60 5 56 Z" stroke="currentColor" strokeWidth="1.5" />
-                            <circle cx="20" cy="36" r="6" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
-                          </svg>
-                          <span className="font-sans text-[9px] uppercase tracking-wider text-amber-400/70 mt-2 text-center font-medium">
-                            {locale === 'ar' ? 'مقصورة العطور' : 'Haute Parfumerie'}
-                          </span>
-                          <span className="font-mono text-[8px] text-amber-500/40">Classy Atelier</span>
-                        </div>
-                        <div className="mt-2 text-center w-full px-1">
-                          <span className="font-display text-xs text-amber-200/50">
-                            {locale === 'ar' ? 'عطور النخبة' : 'Royal Fragrance'}
-                          </span>
-                          <span className="font-mono text-[10px] text-amber-600/60 block mt-0.5">
-                            Classy Valet
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ── Complementary Timepiece & Valet Vault (When fewer than 3 items) ── */}
-                    {showValetSlot && (
-                      <div className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none opacity-85">
-                        <div className="relative w-full h-36 sm:h-40 rounded-lg border border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center p-3">
-                          <div aria-hidden="true" className="absolute inset-1.5 rounded border border-amber-900/20 pointer-events-none" />
-                          <svg className="w-9 h-14 text-amber-500/45 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]" viewBox="0 0 40 64" fill="none">
-                            <path d="M 12 6 L 28 6 L 26 18 L 14 18 Z" stroke="currentColor" strokeWidth="1.5" />
-                            <circle cx="20" cy="32" r="14" stroke="currentColor" strokeWidth="1.5" />
-                            <circle cx="20" cy="32" r="10" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
-                            <line x1="20" y1="32" x2="20" y2="26" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                            <line x1="20" y1="32" x2="25" y2="32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                            <path d="M 14 46 L 26 46 L 28 58 L 12 58 Z" stroke="currentColor" strokeWidth="1.5" />
-                          </svg>
-                          <span className="font-sans text-[9px] uppercase tracking-wider text-amber-400/70 mt-2 text-center font-medium">
-                            {locale === 'ar' ? 'ساعات وإكسسوارات' : 'Timepieces & Valet'}
-                          </span>
-                          <span className="font-mono text-[8px] text-amber-500/40">Haute Horlogerie</span>
-                        </div>
-                        <div className="mt-2 text-center w-full px-1">
-                          <span className="font-display text-xs text-amber-200/50">
-                            {locale === 'ar' ? 'صندوق الساعات' : 'Timepiece Vault'}
-                          </span>
-                          <span className="font-mono text-[10px] text-amber-600/60 block mt-0.5">
-                            Classy Valet
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="py-6 text-center text-amber-400/60 font-sans text-xs">
+                    {locale === 'ar'
+                      ? 'الدرج مفتوح — خصص منتجات للقسم السفلي لتظهر هنا'
+                      : 'Drawer is open — assign bottom section products to display here'}
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
