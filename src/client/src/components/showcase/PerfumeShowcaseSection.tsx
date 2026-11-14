@@ -220,7 +220,7 @@ export function PerfumeShowcaseSection() {
   }[locale]
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#090807] py-20 lg:py-28 text-cream-card selection:bg-gold selection:text-ink">
+    <section className="relative w-full overflow-hidden bg-cream py-20 lg:py-28 text-ink selection:bg-gold selection:text-ink dark:bg-[#090807] dark:text-cream-card transition-colors duration-300">
       {/* ── 1. DYNAMIC COLOR AURA (Arka Plan Işık Patlaması) ── */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -253,7 +253,7 @@ export function PerfumeShowcaseSection() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 1.05 }}
             transition={{ duration: 0.7 }}
-            className="font-display text-[16vw] font-black uppercase tracking-tighter text-white whitespace-nowrap drop-shadow-[0_0_50px_rgba(255,255,255,0.1)]"
+            className="font-display text-[16vw] font-black uppercase tracking-tighter text-ink/20 dark:text-white whitespace-nowrap drop-shadow-[0_0_50px_rgba(255,255,255,0.1)]"
           >
             {current.watermark}
           </motion.span>
@@ -263,12 +263,12 @@ export function PerfumeShowcaseSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center">
-          <p className="inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.3em] text-gold">
+          <p className="inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.3em] text-gold-dark dark:text-gold">
             <span className="h-px w-6 bg-gold" />
             {localizedLabels.tag}
             <span className="h-px w-6 bg-gold" />
           </p>
-          <h2 className="mt-2 font-display text-3xl sm:text-5xl font-normal text-cream-card tracking-tight">
+          <h2 className="mt-2 font-display text-3xl sm:text-5xl font-normal text-ink dark:text-cream-card tracking-tight">
             Classy Men Rim Privé
           </h2>
         </div>
@@ -278,7 +278,7 @@ export function PerfumeShowcaseSection() {
           ref={stageRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center min-h-[580px] rounded-2xl border border-gold/20 bg-[#120f0c]/60 p-6 sm:p-10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.8)] [perspective:1400px]"
+          className="relative mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center min-h-[580px] rounded-2xl border border-line bg-cream-card/90 p-6 sm:p-10 backdrop-blur-xl shadow-xl dark:border-gold/20 dark:bg-[#120f0c]/60 dark:shadow-[0_20px_80px_rgba(0,0,0,0.8)] [perspective:1400px]"
         >
           {/* ── Left Column: Olfactory Notes Panel (Notalar ve İçerik Katmanları) ── */}
           <div className="lg:col-span-4 z-10 space-y-6">
@@ -298,57 +298,57 @@ export function PerfumeShowcaseSection() {
                   >
                     Extrait de Parfum
                   </span>
-                  <h3 className="mt-3 font-display text-2xl sm:text-3xl text-cream-card leading-tight">
+                  <h3 className="mt-3 font-display text-2xl sm:text-3xl text-ink dark:text-cream-card leading-tight">
                     {current.name[locale]}
                   </h3>
-                  <p className="mt-2 font-text text-sm text-cream-card/70 leading-relaxed">
+                  <p className="mt-2 font-text text-sm text-ink/75 dark:text-cream-card/70 leading-relaxed">
                     {current.subtitle[locale]}
                   </p>
                 </div>
 
                 {/* Fragrance Pyramid Notes */}
-                <div className="space-y-3.5 rounded-xl border border-gold/30 bg-black/40 p-4 sm:p-5 backdrop-blur-md">
-                  <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-gold font-semibold flex items-center gap-2">
+                <div className="space-y-3.5 rounded-xl border border-gold/30 bg-cream/70 dark:bg-black/40 p-4 sm:p-5 backdrop-blur-md">
+                  <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-gold-dark dark:text-gold font-semibold flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
                     {localizedLabels.notesHeader}
                   </p>
 
                   {/* Top Note */}
                   <div className="border-b border-gold/15 pb-2.5">
-                    <span className="font-sans text-[10px] uppercase tracking-wider text-cream-card/50">
+                    <span className="font-sans text-[10px] uppercase tracking-wider text-ink/50 dark:text-cream-card/50">
                       {localizedLabels.topNote}
                     </span>
-                    <p className="font-sans text-xs sm:text-sm font-medium text-cream-card mt-0.5">
+                    <p className="font-sans text-xs sm:text-sm font-medium text-ink dark:text-cream-card mt-0.5">
                       {current.notes.top[locale]}
                     </p>
                   </div>
 
                   {/* Heart Note */}
                   <div className="border-b border-gold/15 pb-2.5">
-                    <span className="font-sans text-[10px] uppercase tracking-wider text-gold-light/80">
+                    <span className="font-sans text-[10px] uppercase tracking-wider text-gold-dark dark:text-gold-light/80">
                       {localizedLabels.heartNote}
                     </span>
-                    <p className="font-sans text-xs sm:text-sm font-semibold text-gold-light mt-0.5">
+                    <p className="font-sans text-xs sm:text-sm font-semibold text-gold-dark dark:text-gold-light mt-0.5">
                       {current.notes.heart[locale]}
                     </p>
                   </div>
 
                   {/* Base Note */}
                   <div className="border-b border-gold/15 pb-2.5">
-                    <span className="font-sans text-[10px] uppercase tracking-wider text-cream-card/50">
+                    <span className="font-sans text-[10px] uppercase tracking-wider text-ink/50 dark:text-cream-card/50">
                       {localizedLabels.baseNote}
                     </span>
-                    <p className="font-sans text-xs sm:text-sm font-medium text-cream-card mt-0.5">
+                    <p className="font-sans text-xs sm:text-sm font-medium text-ink dark:text-cream-card mt-0.5">
                       {current.notes.base[locale]}
                     </p>
                   </div>
 
                   {/* Sillage indicator */}
                   <div className="pt-1">
-                    <span className="font-sans text-[10px] uppercase tracking-wider text-gold/70">
+                    <span className="font-sans text-[10px] uppercase tracking-wider text-gold-dark dark:text-gold/70">
                       {localizedLabels.performance}
                     </span>
-                    <p className="font-sans text-xs text-cream-card/80 mt-0.5 italic">
+                    <p className="font-sans text-xs text-ink/80 dark:text-cream-card/80 mt-0.5 italic">
                       {current.notes.sillage[locale]}
                     </p>
                   </div>
@@ -357,11 +357,11 @@ export function PerfumeShowcaseSection() {
                 {/* Price and CTA */}
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <div>
-                    <span className="font-display text-2xl font-bold text-gold">
+                    <span className="font-display text-2xl font-bold text-gold-dark dark:text-gold">
                       {formatPrice(current.price, current.currency)}
                     </span>
                     {current.compareAtPrice && (
-                      <span className="ms-2 font-sans text-xs text-cream-card/40 line-through">
+                      <span className="ms-2 font-sans text-xs text-ink/40 dark:text-cream-card/40 line-through">
                         {formatPrice(current.compareAtPrice, current.currency)}
                       </span>
                     )}
@@ -370,14 +370,14 @@ export function PerfumeShowcaseSection() {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="flex-1 min-w-[160px] rounded-brand bg-gradient-to-r from-gold via-gold-light to-gold px-5 py-3 font-sans text-xs uppercase tracking-[0.2em] font-bold text-ink shadow-[0_4px_20px_rgba(201,154,82,0.35)] hover:shadow-[0_6px_25px_rgba(201,154,82,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="flex-1 min-w-[160px] rounded-brand bg-gradient-to-r from-gold via-gold-light to-gold px-5 py-3 font-sans text-xs uppercase tracking-[0.2em] font-bold text-ink shadow-[0_4px_20px_rgba(201,154,82,0.35)] hover:shadow-[0_6px_25px_rgba(201,154,82,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
                     {localizedLabels.addToCart}
                   </button>
 
                   <Link
                     to={`/product/${current.slug}`}
-                    className="rounded-brand border border-gold/40 px-4 py-3 font-sans text-xs uppercase tracking-[0.15em] text-gold hover:border-gold hover:bg-gold/10 transition-colors"
+                    className="rounded-brand border border-gold/40 px-4 py-3 font-sans text-xs uppercase tracking-[0.15em] text-gold-dark dark:text-gold hover:border-gold hover:bg-gold/10 transition-colors"
                   >
                     {localizedLabels.explore} →
                   </Link>
@@ -416,7 +416,7 @@ export function PerfumeShowcaseSection() {
                   <img
                     src={current.imageUrl}
                     alt={current.name[locale]}
-                    className="h-72 sm:h-96 w-auto object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.9)] filter brightness-105 contrast-110"
+                    className="h-72 sm:h-96 w-auto object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_25px_35px_rgba(0,0,0,0.9)] filter brightness-105 contrast-110"
                     draggable={false}
                   />
 
@@ -451,7 +451,7 @@ export function PerfumeShowcaseSection() {
 
         {/* ── 4. ARC CAROUSEL / BOTTLE SELECTOR STRIP (Alttaki Kavisli Seçici Bar) ── */}
         <div className="mt-10">
-          <p className="text-center font-sans text-xs uppercase tracking-[0.25em] text-cream-card/60 mb-5">
+          <p className="text-center font-sans text-xs uppercase tracking-[0.25em] text-ink/60 dark:text-cream-card/60 mb-5">
             {localizedLabels.switchHint}
           </p>
 
@@ -463,10 +463,10 @@ export function PerfumeShowcaseSection() {
                   key={perfume.id}
                   type="button"
                   onClick={() => setActiveIdx(idx)}
-                  className={`group relative flex flex-col items-center rounded-xl p-3 sm:p-4 border transition-all duration-300 ${
+                  className={`group relative flex flex-col items-center rounded-xl p-3 sm:p-4 border transition-all duration-300 cursor-pointer ${
                     active
                       ? 'border-gold bg-gold/15 scale-105 shadow-[0_0_25px_rgba(201,154,82,0.4)]'
-                      : 'border-white/10 bg-black/40 hover:border-gold/50 hover:bg-gold/5 opacity-70 hover:opacity-100'
+                      : 'border-line bg-cream-card/90 hover:border-gold/50 hover:bg-gold/5 opacity-80 hover:opacity-100 dark:border-white/10 dark:bg-black/40'
                   }`}
                 >
                   {/* Miniature bottle with glow */}
@@ -485,11 +485,11 @@ export function PerfumeShowcaseSection() {
                   </div>
 
                   {/* Title */}
-                  <span className={`mt-2 font-sans text-xs text-center font-medium line-clamp-1 ${active ? 'text-gold-light font-bold' : 'text-cream-card/70'}`}>
+                  <span className={`mt-2 font-sans text-xs text-center font-medium line-clamp-1 ${active ? 'text-gold-dark dark:text-gold-light font-bold' : 'text-ink/75 dark:text-cream-card/70'}`}>
                     {perfume.name[locale]}
                   </span>
 
-                  <span className="font-mono text-[11px] text-gold/80 mt-0.5">
+                  <span className="font-mono text-[11px] text-gold-dark dark:text-gold/80 mt-0.5">
                     {formatPrice(perfume.price, perfume.currency)}
                   </span>
 

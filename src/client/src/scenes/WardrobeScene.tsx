@@ -217,10 +217,10 @@ function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
 
             {/* Suspended Price Tag */}
             <div className="absolute top-8 start-4 sm:start-6 z-40 pointer-events-none">
-              <div className="w-px h-5 bg-amber-300/80 mx-auto" />
-              <div className="rounded-[3px] border border-amber-600/60 bg-[#1a1714] px-2 py-0.5 shadow-lg flex flex-col items-center">
+              <div className="w-px h-5 bg-amber-400/80 dark:bg-amber-300/80 mx-auto" />
+              <div className="rounded-[3px] border border-amber-300/80 bg-white/95 dark:border-amber-600/60 dark:bg-[#1a1714] px-2 py-0.5 shadow-lg flex flex-col items-center">
                 <div className="w-1 h-1 rounded-full border border-gold/60 bg-gold/30 mb-0.5" />
-                <span className="font-mono text-[9px] font-bold text-amber-300 whitespace-nowrap">
+                <span className="font-mono text-[9px] font-bold text-ink dark:text-amber-300 whitespace-nowrap">
                   {formatPrice(current.price, current.currency)}
                 </span>
               </div>
@@ -250,7 +250,7 @@ function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
                     </div>
                   )}
                   {current.images.length > 1 && (
-                    <span className="absolute bottom-0 rounded-full border border-gold/40 bg-black/80 px-2.5 py-0.5 font-sans text-[9px] uppercase tracking-wider text-gold-light opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                    <span className="absolute bottom-0 rounded-full border border-gold/40 bg-white/90 text-ink dark:bg-black/80 dark:text-gold-light px-2.5 py-0.5 font-sans text-[9px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
                       180° Flip
                     </span>
                   )}
@@ -279,14 +279,14 @@ function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
           <div className="mt-1 text-center w-full px-2">
             <Link
               to={`/product/${current.slug}`}
-              className="font-display text-sm font-semibold text-amber-100 hover:text-amber-300 transition-colors line-clamp-1"
+              className="font-display text-sm font-semibold text-ink dark:text-amber-100 hover:text-gold-dark dark:hover:text-amber-300 transition-colors line-clamp-1"
             >
               {name}
             </Link>
             <button
               type="button"
               onClick={() => onOpen(current)}
-              className="mt-0.5 inline-flex items-center gap-1 font-sans text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300 font-bold"
+              className="mt-0.5 inline-flex items-center gap-1 font-sans text-[11px] uppercase tracking-widest text-gold-dark dark:text-amber-400 hover:text-gold dark:hover:text-amber-300 font-bold"
             >
               <span>{locale === 'ar' ? 'معاينة القطعة' : 'Inspect Piece'}</span>
               <span className="rtl:rotate-180">→</span>
@@ -324,17 +324,17 @@ function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
           <button
             type="button"
             onClick={isRtl ? handleNext : handlePrev}
-            className="w-6 h-6 rounded-full border border-amber-700/40 bg-amber-950/60 text-amber-300 hover:bg-amber-600 hover:text-black flex items-center justify-center text-xs font-bold transition-colors"
+            className="w-6 h-6 rounded-full border border-amber-300 bg-white/90 text-amber-900 hover:bg-gold hover:text-white dark:border-amber-700/40 dark:bg-amber-950/60 dark:text-amber-300 dark:hover:bg-amber-600 dark:hover:text-black flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
           >
             {isRtl ? '→' : '←'}
           </button>
-          <span className="font-mono text-[10px] text-amber-400/80">
+          <span className="font-mono text-[10px] text-gold-dark dark:text-amber-400/80 font-bold">
             {activeIdx + 1} / {products.length}
           </span>
           <button
             type="button"
             onClick={isRtl ? handlePrev : handleNext}
-            className="w-6 h-6 rounded-full border border-amber-700/40 bg-amber-950/60 text-amber-300 hover:bg-amber-600 hover:text-black flex items-center justify-center text-xs font-bold transition-colors"
+            className="w-6 h-6 rounded-full border border-amber-300 bg-white/90 text-amber-900 hover:bg-gold hover:text-white dark:border-amber-700/40 dark:bg-amber-950/60 dark:text-amber-300 dark:hover:bg-amber-600 dark:hover:text-black flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
           >
             {isRtl ? '←' : '→'}
           </button>
@@ -395,16 +395,16 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
       <div className="h-1.5 w-full bg-gradient-to-r from-amber-700/40 via-amber-400/80 to-amber-700/40 shadow-xs" />
 
       {/* ── Single Large Drawer Box Frame ── */}
-      <div className="rounded-b-lg border border-amber-900/60 bg-gradient-to-b from-[#241910] via-[#1a110a] to-[#120b06] p-3 sm:p-4 shadow-xl">
+      <div className="rounded-b-lg border border-amber-200/80 bg-gradient-to-b from-[#fbf8f2] via-[#f3ecdf] to-[#e8ddca] dark:border-amber-900/60 dark:bg-gradient-to-b dark:from-[#241910] dark:via-[#1a110a] dark:to-[#120b06] p-3 sm:p-4 shadow-xl">
         {/* Header Bar with Status and Open/Close Toggle */}
-        <div className="flex items-center justify-between pb-2.5 border-b border-amber-900/40">
+        <div className="flex items-center justify-between pb-2.5 border-b border-amber-300/50 dark:border-amber-900/40">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
-            <span className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300">
+            <span className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-amber-500 dark:bg-amber-400'} animate-pulse`} />
+            <span className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-amber-950 dark:text-amber-300">
               {locale === 'ar' ? 'الدرج السفلي' : locale === 'fr' ? 'Tiroir Inférieur' : 'Bottom Drawer'}
             </span>
             {hasProducts && (
-              <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+              <span className="font-mono text-[9px] text-amber-900 dark:text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-400/40 dark:border-amber-500/20">
                 {products.length} {locale === 'ar' ? 'قطع' : 'items'}
               </span>
             )}
@@ -419,7 +419,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                 setActiveAngleIdx(0)
               }
             }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/50 bg-amber-500/15 hover:bg-amber-500 hover:text-black font-sans text-xs font-bold text-amber-200 transition-all cursor-pointer shadow-xs active:scale-95"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-400/70 bg-amber-500/15 hover:bg-gold hover:text-white dark:border-amber-500/50 dark:bg-amber-500/15 font-sans text-xs font-bold text-amber-950 dark:text-amber-200 dark:hover:bg-amber-500 dark:hover:text-black transition-all cursor-pointer shadow-xs active:scale-95"
           >
             <svg
               className={`w-3.5 h-3.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
@@ -444,12 +444,12 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
             onClick={() => setIsOpen((prev) => !prev)}
             role="button"
             tabIndex={0}
-            className="relative h-14 rounded-md border border-amber-800/40 bg-gradient-to-b from-[#2e1f14] via-[#22160d] to-[#170e08] flex items-center justify-center shadow-inner cursor-pointer group hover:border-amber-600/50 transition-colors"
+            className="relative h-14 rounded-md border border-amber-300/80 bg-gradient-to-b from-[#f3ecde] via-[#e6dac5] to-[#d8c9b0] dark:border-amber-800/40 dark:bg-gradient-to-b dark:from-[#2e1f14] dark:via-[#22160d] dark:to-[#170e08] flex items-center justify-center shadow-inner cursor-pointer group hover:border-amber-500/60 dark:hover:border-amber-600/50 transition-colors"
           >
             {/* Elegant Long Brass Horizontal Groove Handle */}
-            <div className="w-44 sm:w-56 h-2 rounded-full bg-gradient-to-r from-amber-700 via-amber-300 to-amber-700 shadow-xs group-hover:via-amber-200 transition-colors" />
+            <div className="w-44 sm:w-56 h-2 rounded-full bg-gradient-to-r from-amber-600 via-amber-300 to-amber-600 dark:from-amber-700 dark:via-amber-300 dark:to-amber-700 shadow-xs group-hover:via-amber-200 transition-colors" />
 
-            <span className="absolute bottom-1.5 font-mono text-[9px] text-amber-500/50 tracking-widest uppercase">
+            <span className="absolute bottom-1.5 font-mono text-[9px] text-amber-800/70 dark:text-amber-500/50 tracking-widest uppercase">
               {isOpen ? (locale === 'ar' ? 'مفتوح' : 'OPEN') : (locale === 'ar' ? 'اسحب لفتح الدرج' : 'PULL TO OPEN')}
             </span>
           </div>
@@ -462,14 +462,14 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                 animate={{ opacity: 1, height: 'auto', y: 0 }}
                 exit={{ opacity: 0, height: 0, y: -10 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                className="relative overflow-hidden mt-3 rounded-lg border-2 border-amber-700/60 bg-gradient-to-b from-[#18110b] via-[#0f0905] to-[#070402] p-3 sm:p-4 shadow-[0_22px_40px_rgba(0,0,0,0.95)]"
+                className="relative overflow-hidden mt-3 rounded-lg border-2 border-amber-300/90 bg-gradient-to-b from-[#fdfbf7] via-[#f5edd9] to-[#ebdcc3] text-ink dark:border-amber-700/60 dark:bg-gradient-to-b dark:from-[#18110b] dark:via-[#0f0905] dark:to-[#070402] dark:text-amber-100 p-3 sm:p-4 shadow-[0_16px_35px_rgba(0,0,0,0.12)] dark:shadow-[0_22px_40px_rgba(0,0,0,0.95)]"
               >
                 {/* Metallic Side Slide Runners */}
-                <div aria-hidden="true" className="absolute inset-y-0 start-0 w-1.5 bg-gradient-to-r from-amber-600/60 via-amber-200/80 to-transparent pointer-events-none rounded-s" />
-                <div aria-hidden="true" className="absolute inset-y-0 end-0 w-1.5 bg-gradient-to-l from-amber-600/60 via-amber-200/80 to-transparent pointer-events-none rounded-e" />
+                <div aria-hidden="true" className="absolute inset-y-0 start-0 w-1.5 bg-gradient-to-r from-amber-600/60 via-amber-300/80 to-transparent pointer-events-none rounded-s" />
+                <div aria-hidden="true" className="absolute inset-y-0 end-0 w-1.5 bg-gradient-to-l from-amber-600/60 via-amber-300/80 to-transparent pointer-events-none rounded-e" />
 
                 {/* Interior LED Strip Warm Ambient Glow */}
-                <div aria-hidden="true" className="h-0.5 w-full bg-gradient-to-r from-transparent via-amber-300/80 to-transparent blur-[1px] mb-2" />
+                <div aria-hidden="true" className="h-0.5 w-full bg-gradient-to-r from-transparent via-amber-400/90 dark:via-amber-300/80 to-transparent blur-[1px] mb-2" />
 
                 {/* Products Lined Up Side-by-Side (Border-free & Constrained) */}
                 {hasProducts ? (
@@ -480,7 +480,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                         type="button"
                         onClick={() => handleScroll(isRtl ? 'right' : 'left')}
                         aria-label="Scroll drawer left"
-                        className="absolute start-1 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full border border-amber-500/50 bg-black/85 text-amber-300 hover:bg-amber-500 hover:text-black flex items-center justify-center transition-all shadow-lg backdrop-blur-xs cursor-pointer active:scale-95"
+                        className="absolute start-1 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full border border-amber-300/80 bg-white/90 text-amber-900 hover:bg-gold hover:text-white dark:border-amber-500/50 dark:bg-black/85 dark:text-amber-300 dark:hover:bg-amber-500 dark:hover:text-black flex items-center justify-center transition-all shadow-lg backdrop-blur-xs cursor-pointer active:scale-95"
                       >
                         <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -512,7 +512,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                               {/* Soft Natural Floor Contact Shadow */}
                               <div
                                 aria-hidden="true"
-                                className={`absolute bottom-2 w-28 sm:w-36 h-3 rounded-[50%] bg-black/95 blur-[3px] transition-all duration-300 pointer-events-none ${
+                                className={`absolute bottom-2 w-28 sm:w-36 h-3 rounded-[50%] bg-ink/35 dark:bg-black/95 blur-[3px] transition-all duration-300 pointer-events-none ${
                                   isLifted ? 'scale-70 opacity-35' : 'scale-100 opacity-85'
                                 }`}
                               />
@@ -540,12 +540,12 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                                       transition={{ duration: 0.22 }}
                                       className={`max-h-full max-w-full object-contain filter pointer-events-none transition-all duration-300 ${
                                         isLifted
-                                          ? 'drop-shadow-[0_22px_28px_rgba(0,0,0,0.95)] drop-shadow-[0_0_15px_rgba(212,175,55,0.45)]'
-                                          : 'drop-shadow-[0_8px_14px_rgba(0,0,0,0.85)] group-hover:scale-105'
+                                          ? 'drop-shadow-[0_22px_28px_rgba(0,0,0,0.5)] dark:drop-shadow-[0_22px_28px_rgba(0,0,0,0.95)] drop-shadow-[0_0_15px_rgba(212,175,55,0.45)]'
+                                          : 'drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_14px_rgba(0,0,0,0.85)] group-hover:scale-105'
                                       }`}
                                     />
                                   ) : (
-                                    <span className="font-display text-2xl text-amber-400/40">{name.charAt(0)}</span>
+                                    <span className="font-display text-2xl text-gold-dark/40 dark:text-amber-400/40">{name.charAt(0)}</span>
                                   )}
                                 </AnimatePresence>
 
@@ -554,7 +554,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                                   <motion.div
                                     initial={{ opacity: 0, y: -6 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="absolute -top-7 z-30 flex items-center gap-1 bg-black/95 border border-amber-400/70 rounded-full px-2 py-0.5 shadow-lg backdrop-blur-xs whitespace-nowrap"
+                                    className="absolute -top-7 z-30 flex items-center gap-1 bg-white/95 dark:bg-black/95 border border-amber-400/70 rounded-full px-2 py-0.5 shadow-lg backdrop-blur-xs whitespace-nowrap"
                                   >
                                     {item.images.map((_, imgIdx) => (
                                       <button
@@ -566,8 +566,8 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                                         }}
                                         className={`px-2 py-0.5 rounded-full text-[9px] font-sans font-bold transition-all cursor-pointer ${
                                           safeAngle === imgIdx
-                                            ? 'bg-amber-400 text-black shadow-xs'
-                                            : 'text-amber-300/80 hover:text-amber-100'
+                                            ? 'bg-amber-500 text-white dark:bg-amber-400 dark:text-black shadow-xs'
+                                            : 'text-amber-900/80 hover:text-amber-950 dark:text-amber-300/80 dark:hover:text-amber-100'
                                         }`}
                                       >
                                         {imgIdx === 0
@@ -584,10 +584,10 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
 
                             {/* Label & Price */}
                             <div className="mt-2 text-center w-full px-1">
-                              <span className="line-clamp-1 font-display text-xs text-amber-100 font-medium">
+                              <span className="line-clamp-1 font-display text-xs text-ink dark:text-amber-100 font-medium">
                                 {name}
                               </span>
-                              <span className="font-mono text-[11px] font-bold text-amber-400 mt-0.5 block">
+                              <span className="font-mono text-[11px] font-bold text-gold-dark dark:text-amber-400 mt-0.5 block">
                                 {formatPrice(item.price, item.currency)}
                               </span>
                             </div>
@@ -605,11 +605,11 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                                     e.stopPropagation()
                                     onOpenModal(item)
                                   }}
-                                  className="font-sans text-[10px] font-bold uppercase tracking-wider text-amber-300 hover:text-amber-100 underline underline-offset-2 cursor-pointer"
+                                  className="font-sans text-[10px] font-bold uppercase tracking-wider text-gold-dark hover:text-gold dark:text-amber-300 dark:hover:text-amber-100 underline underline-offset-2 cursor-pointer"
                                 >
                                   {locale === 'ar' ? 'عرض التفاصيل' : 'Details'} →
                                 </button>
-                                <span className="text-amber-700 text-xs">•</span>
+                                <span className="text-amber-600 dark:text-amber-700 text-xs">•</span>
                                 <button
                                   type="button"
                                   onClick={(e) => {
@@ -617,7 +617,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                                     setActiveItemId(null)
                                     setActiveAngleIdx(0)
                                   }}
-                                  className="font-sans text-[10px] font-medium text-amber-500/80 hover:text-amber-300 cursor-pointer"
+                                  className="font-sans text-[10px] font-medium text-ink/60 hover:text-ink dark:text-amber-500/80 dark:hover:text-amber-300 cursor-pointer"
                                 >
                                   {locale === 'ar' ? 'إعادة للدرج' : 'Return'}
                                 </button>
@@ -634,7 +634,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                         type="button"
                         onClick={() => handleScroll(isRtl ? 'left' : 'right')}
                         aria-label="Scroll drawer right"
-                        className="absolute end-1 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full border border-amber-500/50 bg-black/85 text-amber-300 hover:bg-amber-500 hover:text-black flex items-center justify-center transition-all shadow-lg backdrop-blur-xs cursor-pointer active:scale-95"
+                        className="absolute end-1 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full border border-amber-300/80 bg-white/90 text-amber-900 hover:bg-gold hover:text-white dark:border-amber-500/50 dark:bg-black/85 dark:text-amber-300 dark:hover:bg-amber-500 dark:hover:text-black flex items-center justify-center transition-all shadow-lg backdrop-blur-xs cursor-pointer active:scale-95"
                       >
                         <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -643,7 +643,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                     )}
                   </div>
                 ) : (
-                  <div className="py-6 text-center text-amber-400/60 font-sans text-xs">
+                  <div className="py-6 text-center text-ink/60 dark:text-amber-400/60 font-sans text-xs">
                     {locale === 'ar'
                       ? 'الدرج مفتوح — خصص منتجات للقسم السفلي لتظهر هنا'
                       : 'Drawer is open — assign bottom section products to display here'}
@@ -754,13 +754,13 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
   return (
     <div className="relative flex flex-col items-center justify-between h-full w-full select-none">
       {/* ── Shelf Cubby Header ── */}
-      <div className="flex items-center justify-between w-full px-2 pb-1.5 border-b border-amber-900/40">
-        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-amber-300 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+      <div className="flex items-center justify-between w-full px-2 pb-1.5 border-b border-amber-300/50 dark:border-amber-900/40">
+        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-amber-950 dark:text-amber-300 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
           {locale === 'ar' ? 'رف الملابس المطوية (حزمة)' : 'Folded Boutique Stack'}
         </span>
         {hasMultiple && (
-          <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+          <span className="font-mono text-[9px] text-amber-900 dark:text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-400/40 dark:border-amber-500/20">
             {products.length} {locale === 'ar' ? 'قطع' : 'items'}
           </span>
         )}
@@ -885,7 +885,7 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
                     draggable={false}
                     className="relative z-10 max-h-44 sm:max-h-52 w-auto object-contain filter drop-shadow-[0_20px_28px_rgba(0,0,0,0.92)] hover:scale-105 transition-transform duration-300 pointer-events-none"
                   />
-                  <span className="absolute -bottom-2 z-20 rounded-full border border-amber-400/60 bg-black/85 px-3 py-0.5 font-sans text-[10px] uppercase tracking-wider text-amber-300 shadow-md">
+                  <span className="absolute -bottom-2 z-20 rounded-full border border-amber-300/80 bg-white/95 text-ink dark:border-amber-400/60 dark:bg-black/85 dark:text-amber-300 px-3 py-0.5 font-sans text-[10px] uppercase tracking-wider shadow-md">
                     {canUnfold
                       ? locale === 'ar' ? 'انقر لفتح القطعة' : 'Tap to Unfold'
                       : locale === 'ar' ? 'انقر للتالي' : 'Tap for Next'}
@@ -907,7 +907,7 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
                     draggable={false}
                     className="relative z-10 max-h-52 sm:max-h-60 w-auto object-contain filter drop-shadow-[0_22px_32px_rgba(212,175,55,0.45)] pointer-events-none"
                   />
-                  <span className="absolute -bottom-2 z-30 rounded-full border border-amber-400 bg-amber-500/25 px-3 py-0.5 font-sans text-[10px] font-bold uppercase tracking-wider text-amber-200 backdrop-blur-xs shadow-lg animate-pulse">
+                  <span className="absolute -bottom-2 z-30 rounded-full border border-amber-400 bg-amber-500/25 px-3 py-0.5 font-sans text-[10px] font-bold uppercase tracking-wider text-amber-950 dark:text-amber-200 backdrop-blur-xs shadow-lg animate-pulse">
                     {locale === 'ar' ? 'طي ونقل لأسفل الحزمة للتالي' : 'Fold and Send to Bottom'}
                   </span>
                 </motion.div>
@@ -917,15 +917,15 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
 
           <div
             aria-hidden="true"
-            className="w-44 sm:w-56 h-3.5 rounded-[50%] bg-black/85 blur-[3px] mt-3 pointer-events-none"
+            className="w-44 sm:w-56 h-3.5 rounded-[50%] bg-ink/30 dark:bg-black/85 blur-[3px] mt-3 pointer-events-none"
           />
         </div>
       </div>
 
       {/* Shelf Plank */}
       <div aria-hidden="true" className="relative w-full mt-1">
-        <div className="h-0.5 w-full bg-gradient-to-r from-amber-700/30 via-amber-400/80 to-amber-700/30" />
-        <div className="h-3 w-full bg-gradient-to-b from-[#3a2717] via-[#281a0e] to-[#150d07] border-t border-amber-500/40 border-b border-black shadow-md" />
+        <div className="h-0.5 w-full bg-gradient-to-r from-amber-600/30 via-amber-400/80 to-amber-600/30" />
+        <div className="h-3 w-full bg-gradient-to-b from-[#dfd3bf] via-[#cfbe9f] to-[#baa889] dark:from-[#3a2717] dark:via-[#281a0e] dark:to-[#150d07] border-t border-amber-300 dark:border-amber-500/40 border-b border-amber-400/40 dark:border-black shadow-md" />
       </div>
 
       {/* Shelf Placard & Nav Arrows */}
@@ -935,7 +935,7 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
             type="button"
             onClick={handlePrev}
             aria-label="Previous folded piece"
-            className="w-7 h-7 rounded-full border border-amber-600/40 bg-amber-950/60 hover:bg-amber-600 hover:text-black text-amber-300 flex items-center justify-center transition-colors text-xs font-bold shrink-0"
+            className="w-7 h-7 rounded-full border border-amber-300 bg-white/90 text-amber-900 hover:bg-gold hover:text-white dark:border-amber-600/40 dark:bg-amber-950/60 dark:text-amber-300 dark:hover:bg-amber-600 dark:hover:text-black flex items-center justify-center transition-colors text-xs font-bold shrink-0 cursor-pointer"
           >
             ←
           </button>
@@ -944,19 +944,19 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
         <div className="text-center flex-1 min-w-0">
           <Link
             to={`/product/${current.slug}`}
-            className="font-display text-xs sm:text-sm font-semibold text-amber-100 hover:text-amber-300 transition-colors line-clamp-1"
+            className="font-display text-xs sm:text-sm font-semibold text-ink dark:text-amber-100 hover:text-gold-dark dark:hover:text-amber-300 transition-colors line-clamp-1"
           >
             {name}
           </Link>
           <div className="flex items-center justify-center gap-2 mt-0.5">
-            <span className="font-mono text-xs font-bold text-amber-400">
+            <span className="font-mono text-xs font-bold text-gold-dark dark:text-amber-400">
               {formatPrice(current.price, current.currency)}
             </span>
-            <span className="text-amber-600 text-xs">•</span>
+            <span className="text-amber-600 dark:text-amber-600 text-xs">•</span>
             <button
               type="button"
               onClick={() => onOpenModal(current)}
-              className="font-sans text-[11px] text-amber-300 hover:text-amber-200 uppercase tracking-widest font-bold underline underline-offset-2"
+              className="font-sans text-[11px] text-gold-dark hover:text-gold dark:text-amber-300 dark:hover:text-amber-200 uppercase tracking-widest font-bold underline underline-offset-2 cursor-pointer"
             >
               {locale === 'ar' ? 'عرض التفاصيل' : 'Details'} →
             </button>
@@ -968,7 +968,7 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
             type="button"
             onClick={handleNext}
             aria-label="Next folded piece"
-            className="w-7 h-7 rounded-full border border-amber-600/40 bg-amber-950/60 hover:bg-amber-600 hover:text-black text-amber-300 flex items-center justify-center transition-colors text-xs font-bold shrink-0"
+            className="w-7 h-7 rounded-full border border-amber-300 bg-white/90 text-amber-900 hover:bg-gold hover:text-white dark:border-amber-600/40 dark:bg-amber-950/60 dark:text-amber-300 dark:hover:bg-amber-600 dark:hover:text-black flex items-center justify-center transition-colors text-xs font-bold shrink-0 cursor-pointer"
           >
             →
           </button>
@@ -980,15 +980,15 @@ function FoldedStackShelf({ products, onOpenModal }: FoldedStackShelfProps) {
 
 function DecorativeShelfLevel({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="flex flex-col justify-between p-2.5 border-b border-amber-900/40 bg-black/20">
+    <div className="flex flex-col justify-between p-2.5 border-b border-amber-300/40 bg-amber-500/5 dark:border-amber-900/40 dark:bg-black/20">
       <div className="flex items-center justify-between">
-        <span className="font-sans text-[10px] uppercase tracking-widest text-amber-400/70">{title}</span>
-        <span className="font-mono text-[9px] text-amber-500/50">{subtitle}</span>
+        <span className="font-sans text-[10px] uppercase tracking-widest text-amber-900/70 dark:text-amber-400/70">{title}</span>
+        <span className="font-mono text-[9px] text-amber-800/60 dark:text-amber-500/50">{subtitle}</span>
       </div>
       <div className="h-6 flex items-center justify-center">
-        <div className="w-16 h-1 rounded-full bg-amber-800/30" />
+        <div className="w-16 h-1 rounded-full bg-amber-400/40 dark:bg-amber-800/30" />
       </div>
-      <div aria-hidden="true" className="h-2 w-full bg-gradient-to-b from-[#2e1d13] to-[#1a1009] border-t border-amber-600/30 rounded-xs" />
+      <div aria-hidden="true" className="h-2 w-full bg-gradient-to-b from-[#ded2be] to-[#ccbba0] dark:from-[#2e1d13] dark:to-[#1a1009] border-t border-amber-300 dark:border-amber-600/30 rounded-xs" />
     </div>
   )
 }
@@ -1021,32 +1021,32 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
 
   return (
     <section
-      className="relative w-full overflow-hidden rounded-2xl border-4 border-amber-950/80 bg-[#120e0a] shadow-[0_30px_70px_rgba(0,0,0,0.95)] [perspective:1400px]"
+      className="relative w-full overflow-hidden rounded-2xl border-4 border-amber-300/80 bg-[#fbf9f4] shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:border-amber-950/80 dark:bg-[#120e0a] dark:shadow-[0_30px_70px_rgba(0,0,0,0.95)] [perspective:1400px]"
       aria-label="Classy Men Royal Wardrobe Showcase"
     >
       {/* ── Interior Ambient Spotlights ── */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.18),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.14),transparent_65%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.18),transparent_65%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_80%_35%,rgba(212,175,55,0.14),transparent_55%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_80%_35%,rgba(212,175,55,0.10),transparent_55%)] dark:bg-[radial-gradient(circle_at_80%_35%,rgba(212,175,55,0.14),transparent_55%)]"
       />
 
-      {/* ── 3D Dual Smoked Oak Wardrobe Doors ── */}
+      {/* ── 3D Dual Oak Wardrobe Doors ── */}
       {animated && (
         <>
           {/* Left Door */}
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 start-0 z-40 w-1/2 border-e-2 border-amber-950 bg-gradient-to-b from-[#2e1d13] via-[#1f140c] to-[#120c07] shadow-2xl overflow-hidden"
+            className="pointer-events-none absolute inset-y-0 start-0 z-40 w-1/2 border-e-2 border-amber-300/90 bg-gradient-to-b from-[#f7f2ea] via-[#ece5d8] to-[#ded4c3] shadow-xl dark:border-amber-950 dark:bg-gradient-to-b dark:from-[#2e1d13] dark:via-[#1f140c] dark:to-[#120c07] dark:shadow-2xl overflow-hidden"
             style={{ transformOrigin: isRtl ? 'right center' : 'left center', backfaceVisibility: 'hidden' }}
             initial={{ rotateY: 0 }}
             animate={{ rotateY: doorsOpen ? (isRtl ? 108 : -108) : 0 }}
             transition={DOOR_SPRING}
           >
-            <div className="absolute inset-5 rounded border border-amber-500/25 bg-black/20" />
+            <div className="absolute inset-5 rounded border border-amber-500/30 bg-white/20 dark:border-amber-500/25 dark:bg-black/20" />
             <div
               className="absolute inset-8 opacity-10"
               style={{
@@ -1054,19 +1054,19 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
                   'repeating-linear-gradient(180deg, transparent, transparent 16px, rgba(212,175,55,0.4) 16px, rgba(212,175,55,0.4) 17px)',
               }}
             />
-            <div className="absolute end-4 top-1/2 -translate-y-1/2 h-16 w-2 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 shadow-lg" />
+            <div className="absolute end-4 top-1/2 -translate-y-1/2 h-16 w-2 rounded-full bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 shadow-lg" />
           </motion.div>
 
           {/* Right Door */}
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 end-0 z-40 w-1/2 border-s-2 border-amber-950 bg-gradient-to-b from-[#2e1d13] via-[#1f140c] to-[#120c07] shadow-2xl overflow-hidden"
+            className="pointer-events-none absolute inset-y-0 end-0 z-40 w-1/2 border-s-2 border-amber-300/90 bg-gradient-to-b from-[#f7f2ea] via-[#ece5d8] to-[#ded4c3] shadow-xl dark:border-amber-950 dark:bg-gradient-to-b dark:from-[#2e1d13] dark:via-[#1f140c] dark:to-[#120c07] dark:shadow-2xl overflow-hidden"
             style={{ transformOrigin: isRtl ? 'left center' : 'right center', backfaceVisibility: 'hidden' }}
             initial={{ rotateY: 0 }}
             animate={{ rotateY: doorsOpen ? (isRtl ? -108 : 108) : 0 }}
             transition={DOOR_SPRING}
           >
-            <div className="absolute inset-5 rounded border border-amber-500/25 bg-black/20" />
+            <div className="absolute inset-5 rounded border border-amber-500/30 bg-white/20 dark:border-amber-500/25 dark:bg-black/20" />
             <div
               className="absolute inset-8 opacity-10"
               style={{
@@ -1074,7 +1074,7 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
                   'repeating-linear-gradient(180deg, transparent, transparent 16px, rgba(212,175,55,0.4) 16px, rgba(212,175,55,0.4) 17px)',
               }}
             />
-            <div className="absolute start-4 top-1/2 -translate-y-1/2 h-16 w-2 rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 shadow-lg" />
+            <div className="absolute start-4 top-1/2 -translate-y-1/2 h-16 w-2 rounded-full bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 shadow-lg" />
           </motion.div>
         </>
       )}
@@ -1083,16 +1083,16 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
       <div className="relative z-10 py-7 sm:py-9 px-4 sm:px-8 space-y-6">
         {/* Royal Wardrobe Badge */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-1.5 font-sans text-xs uppercase tracking-[0.25em] text-amber-200/95 shadow-sm">
-            <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-500/10 px-4 py-1.5 font-sans text-xs uppercase tracking-[0.25em] text-amber-950 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200/95 shadow-xs">
+            <span className="h-2 w-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-ping" />
             {locale === 'ar' ? 'خزانة ملابس كلاسي ريم الملكية' : locale === 'fr' ? 'Garde-Robe Royale Classy Men' : 'Classy Men Royal Wardrobe'}
           </span>
         </div>
 
         {/* ── ARCHITECTURAL CLOSET (Matching Reference Photo) ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch rounded-xl border border-amber-900/50 bg-[#16110c]/85 shadow-2xl overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch rounded-xl border border-amber-200/90 bg-white/95 dark:border-amber-900/50 dark:bg-[#16110c]/85 shadow-xl dark:shadow-2xl overflow-hidden">
           {/* ── LEFT BAY (7/12): Hanging Rod Bay + Single Large Openable Drawer Chest ── */}
-          <div className="lg:col-span-7 p-4 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-e border-amber-900/50">
+          <div className="lg:col-span-7 p-4 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-e border-amber-200/90 dark:border-amber-900/50">
             {/* Top Hanging Rod with RailScene-like carousel */}
             <HangingBay products={hangingProducts} onOpen={setSelectedProduct} isRtl={isRtl} />
 
@@ -1101,7 +1101,7 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
           </div>
 
           {/* ── RIGHT BAY (5/12): 5-Tier Shelving Tower with Stacked Folded Clothes ── */}
-          <div className="lg:col-span-5 p-4 sm:p-6 flex flex-col justify-between bg-[#140e09]/70">
+          <div className="lg:col-span-5 p-4 sm:p-6 flex flex-col justify-between bg-[#faf6ef]/70 dark:bg-[#140e09]/70">
             {/* Top Decorative Cubby (Level 1) */}
             <DecorativeShelfLevel
               title={locale === 'ar' ? 'الرف العلوي' : 'Top Shelf'}
@@ -1115,17 +1115,17 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
 
             {/* Lower Decorative Cubby (Level 4/5) */}
             <DecorativeShelfLevel
-              title={locale === 'ar' ? 'الرف السفلي' : 'Lower Cubby'}
+              title={locale === 'ar' ? 'الرف السفli' : 'Lower Cubby'}
               subtitle="Luxury Knitwear"
             />
           </div>
         </div>
 
         {/* ── FOOTER BAR ── */}
-        <div className="border-t border-amber-900/40 pt-4 px-2">
+        <div className="border-t border-amber-200/80 dark:border-amber-900/40 pt-4 px-2">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start">
-            <div className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/5 px-4 py-1.5 font-sans text-xs text-amber-200/80">
-              <svg className="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-center gap-2 rounded-full border border-amber-300 bg-amber-500/10 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/5 dark:text-amber-200/80 px-4 py-1.5 font-sans text-xs">
+              <svg className="w-4 h-4 text-gold-dark dark:text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -1137,7 +1137,7 @@ export function WardrobeScene({ products, intensity }: SceneProps) {
             </div>
             <Link
               to="/catalog"
-              className="inline-flex items-center gap-2 rounded-brand border border-amber-500/50 bg-amber-500/10 px-5 py-2 font-sans text-xs uppercase tracking-[0.2em] font-bold text-amber-300 hover:bg-amber-500 hover:text-black transition-all"
+              className="inline-flex items-center gap-2 rounded-brand border border-amber-400 bg-amber-500/15 text-amber-950 hover:bg-gold hover:text-white dark:border-amber-500/50 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500 dark:hover:text-black px-5 py-2 font-sans text-xs uppercase tracking-[0.2em] font-bold transition-all shadow-xs"
             >
               <span>{t('rail.shopCollection')}</span>
               <span className="rtl:rotate-180">→</span>

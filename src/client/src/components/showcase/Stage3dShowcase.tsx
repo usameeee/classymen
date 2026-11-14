@@ -262,7 +262,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
   const normalizedDeg = Math.round((((rotationDeg % 360) + 360) % 360))
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#090807] py-20 lg:py-28 text-cream-card selection:bg-gold selection:text-ink">
+    <section className="relative w-full overflow-hidden bg-cream py-20 lg:py-28 text-ink selection:bg-gold selection:text-ink dark:bg-[#090807] dark:text-cream-card transition-colors duration-300">
       {/* ── 1. DYNAMIC COLOR AURA (Atmospheric Lighting) ── */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -294,7 +294,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 1.05 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-[15vw] font-black tracking-widest text-cream-card uppercase whitespace-nowrap"
+            className="font-display text-[15vw] font-black tracking-widest text-ink/20 dark:text-cream-card uppercase whitespace-nowrap"
           >
             {watermarkText}
           </motion.span>
@@ -304,15 +304,15 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center space-y-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 font-sans text-xs uppercase tracking-[0.3em] text-gold-light">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 font-sans text-xs uppercase tracking-[0.3em] text-gold-dark dark:text-gold-light">
             <span className="h-1.5 w-1.5 rounded-full bg-gold animate-ping" />
             {localizedLabels.categoryTag}
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-cream-card">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-ink dark:text-cream-card">
             {pickText(resolvedCategory.name, locale)}
           </h2>
           {resolvedCategory.description && (
-            <p className="mx-auto max-w-2xl font-text text-sm sm:text-base text-cream-card/70">
+            <p className="mx-auto max-w-2xl font-text text-sm sm:text-base text-ink/70 dark:text-cream-card/70">
               {pickText(resolvedCategory.description, locale)}
             </p>
           )}
@@ -323,7 +323,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
           ref={stageRef}
           onMouseMove={handleStageMouseMove}
           onMouseLeave={handleStageMouseLeave}
-          className="relative mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center min-h-[600px] rounded-2xl border border-gold/20 bg-[#120f0c]/70 p-6 sm:p-10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.85)] [perspective:1400px]"
+          className="relative mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center min-h-[600px] rounded-2xl border border-line bg-cream-card/90 p-6 sm:p-10 backdrop-blur-xl shadow-xl dark:border-gold/20 dark:bg-[#120f0c]/70 dark:shadow-[0_20px_80px_rgba(0,0,0,0.85)] [perspective:1400px]"
         >
           {/* Left Column: Specifications / Notes Panel */}
           <div className="lg:col-span-5 z-10 space-y-6">
@@ -343,28 +343,28 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                   >
                     {current.sizes[0] ? `${current.sizes[0]}` : 'Signature Collection'}
                   </span>
-                  <h3 className="mt-3 font-display text-2xl sm:text-3xl text-cream-card leading-tight">
+                  <h3 className="mt-3 font-display text-2xl sm:text-3xl text-ink dark:text-cream-card leading-tight">
                     {currentName}
                   </h3>
                   {currentDesc && (
-                    <p className="mt-2 font-text text-sm text-cream-card/70 leading-relaxed">
+                    <p className="mt-2 font-text text-sm text-ink/75 dark:text-cream-card/70 leading-relaxed">
                       {currentDesc}
                     </p>
                   )}
                 </div>
 
                 {/* Details Card */}
-                <div className="space-y-3.5 rounded-xl border border-gold/30 bg-black/50 p-4 sm:p-5 backdrop-blur-md">
-                  <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-gold font-semibold flex items-center gap-2">
+                <div className="space-y-3.5 rounded-xl border border-gold/30 bg-cream/70 dark:bg-black/50 p-4 sm:p-5 backdrop-blur-md">
+                  <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-gold-dark dark:text-gold font-semibold flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
                     {localizedLabels.specsHeader}
                   </p>
 
                   <div className="border-b border-gold/15 pb-2.5">
-                    <span className="font-sans text-[10px] uppercase tracking-wider text-cream-card/50">
+                    <span className="font-sans text-[10px] uppercase tracking-wider text-ink/50 dark:text-cream-card/50">
                       {localizedLabels.craftsmanship}
                     </span>
-                    <p className="font-sans text-xs sm:text-sm font-medium text-cream-card mt-0.5">
+                    <p className="font-sans text-xs sm:text-sm font-medium text-ink dark:text-cream-card mt-0.5">
                       {current.isMadeToMeasure
                         ? (locale === 'ar' ? 'خياطة حسب الطلب • تفصيل يدوي فاخر' : locale === 'fr' ? 'Sur-mesure • Atelier artisanal' : 'Bespoke tailoring • Handcrafted')
                         : (locale === 'ar' ? 'تصميم حصري • دار Classy Men Rim' : locale === 'fr' ? 'Design exclusif • Maison Classy Men' : 'Exclusive design • Maison Classy Men')}
@@ -373,20 +373,20 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
 
                   {current.tags.length > 0 && (
                     <div className="border-b border-gold/15 pb-2.5">
-                      <span className="font-sans text-[10px] uppercase tracking-wider text-gold-light/80">
+                      <span className="font-sans text-[10px] uppercase tracking-wider text-gold-dark dark:text-gold-light/80">
                         {localizedLabels.composition}
                       </span>
-                      <p className="font-sans text-xs sm:text-sm font-semibold text-gold-light mt-0.5 capitalize">
+                      <p className="font-sans text-xs sm:text-sm font-semibold text-gold-dark dark:text-gold-light mt-0.5 capitalize">
                         {current.tags.join(' • ')}
                       </p>
                     </div>
                   )}
 
                   <div className="pt-1">
-                    <span className="font-sans text-[10px] uppercase tracking-wider text-cream-card/50">
+                    <span className="font-sans text-[10px] uppercase tracking-wider text-ink/50 dark:text-cream-card/50">
                       {localizedLabels.availability}
                     </span>
-                    <p className="font-sans text-xs text-cream-card/80 mt-0.5">
+                    <p className="font-sans text-xs text-ink/80 dark:text-cream-card/80 mt-0.5">
                       {localizedLabels.inStock} {current.sizes.length > 0 && `(${current.sizes.join(', ')})`}
                     </p>
                   </div>
@@ -395,11 +395,11 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                 {/* Pricing & CTA */}
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <div>
-                    <span className="font-display text-2xl font-bold text-gold">
+                    <span className="font-display text-2xl font-bold text-gold-dark dark:text-gold">
                       {formatPrice(current.price, current.currency)}
                     </span>
                     {current.compareAtPrice && (
-                      <span className="ms-2 font-sans text-xs text-cream-card/40 line-through">
+                      <span className="ms-2 font-sans text-xs text-ink/40 dark:text-cream-card/40 line-through">
                         {formatPrice(current.compareAtPrice, current.currency)}
                       </span>
                     )}
@@ -408,14 +408,14 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="flex-1 min-w-[160px] rounded-brand bg-gradient-to-r from-gold via-gold-light to-gold px-5 py-3 font-sans text-xs uppercase tracking-[0.2em] font-bold text-ink shadow-[0_4px_20px_rgba(201,154,82,0.35)] hover:shadow-[0_6px_25px_rgba(201,154,82,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="flex-1 min-w-[160px] rounded-brand bg-gradient-to-r from-gold via-gold-light to-gold px-5 py-3 font-sans text-xs uppercase tracking-[0.2em] font-bold text-ink shadow-[0_4px_20px_rgba(201,154,82,0.35)] hover:shadow-[0_6px_25px_rgba(201,154,82,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
                     {localizedLabels.addToCart}
                   </button>
 
                   <Link
                     to={`/product/${current.slug}`}
-                    className="rounded-brand border border-gold/40 px-4 py-3 font-sans text-xs uppercase tracking-[0.15em] text-gold hover:border-gold hover:bg-gold/10 transition-colors"
+                    className="rounded-brand border border-gold/40 px-4 py-3 font-sans text-xs uppercase tracking-[0.15em] text-gold-dark dark:text-gold hover:border-gold hover:bg-gold/10 transition-colors"
                   >
                     {localizedLabels.explore} →
                   </Link>
@@ -427,7 +427,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
           {/* Right Column: 360° Interactive Arena with Previous & Next in 3D */}
           <div className="lg:col-span-7 flex flex-col items-center justify-center relative min-h-[460px] sm:min-h-[520px]">
             {/* Top instruction badge */}
-            <div className="absolute top-0 z-30 flex items-center gap-2 rounded-full border border-gold/30 bg-black/70 px-4 py-1.5 text-[11px] font-sans text-gold-light backdrop-blur-md shadow-md">
+            <div className="absolute top-0 z-30 flex items-center gap-2 rounded-full border border-gold/30 bg-cream-card/90 dark:bg-black/70 px-4 py-1.5 text-[11px] font-sans text-gold-dark dark:text-gold-light backdrop-blur-md shadow-md">
               <svg className="w-3.5 h-3.5 text-gold animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
               </svg>
@@ -481,7 +481,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                     )}
                   </div>
 
-                  <span className="font-display text-xs text-cream-card line-clamp-1 max-w-[90px] sm:max-w-[120px] mt-1 pointer-events-none">
+                  <span className="font-display text-xs text-ink dark:text-cream-card line-clamp-1 max-w-[90px] sm:max-w-[120px] mt-1 pointer-events-none">
                     {pickText(prevProduct.name, locale)}
                   </span>
                 </div>
@@ -519,7 +519,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                       style={{
                         transform: mirrored ? 'scaleX(-1)' : 'none',
                       }}
-                      className="h-64 sm:h-80 md:h-96 w-auto max-w-full object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.95)] filter brightness-105 contrast-110 pointer-events-none transition-transform duration-100"
+                      className="h-64 sm:h-80 md:h-96 w-auto max-w-full object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.4)] dark:drop-shadow-[0_25px_35px_rgba(0,0,0,0.95)] filter brightness-105 contrast-110 pointer-events-none transition-transform duration-100"
                       draggable={false}
                     />
                   ) : (
@@ -592,7 +592,7 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                     )}
                   </div>
 
-                  <span className="font-display text-xs text-cream-card line-clamp-1 max-w-[90px] sm:max-w-[120px] mt-1 pointer-events-none">
+                  <span className="font-display text-xs text-ink dark:text-cream-card line-clamp-1 max-w-[90px] sm:max-w-[120px] mt-1 pointer-events-none">
                     {pickText(nextProduct.name, locale)}
                   </span>
                 </div>
@@ -612,10 +612,10 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                     key={item.deg}
                     type="button"
                     onClick={() => setRotationDeg(item.deg)}
-                    className={`rounded-full px-2.5 py-1 font-sans text-[10px] font-mono transition-all ${
+                    className={`rounded-full px-2.5 py-1 font-sans text-[10px] font-mono transition-all cursor-pointer ${
                       Math.abs(normalizedDeg - item.deg) < 20
                         ? 'bg-gold text-ink font-bold shadow-[0_0_12px_rgba(201,154,82,0.5)]'
-                        : 'border border-gold/30 bg-black/50 text-cream-card/70 hover:border-gold hover:text-gold'
+                        : 'border border-gold/30 bg-cream-card/90 text-ink/75 hover:border-gold hover:text-gold dark:bg-black/50 dark:text-cream-card/70'
                     }`}
                   >
                     {item.label}
@@ -629,12 +629,12 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
         {/* ── 4. ARC CAROUSEL / SELECTOR STRIP ── */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-5 px-2">
-            <p className="font-sans text-xs uppercase tracking-[0.25em] text-cream-card/60">
+            <p className="font-sans text-xs uppercase tracking-[0.25em] text-ink/60 dark:text-cream-card/60">
               {localizedLabels.switchHint}
             </p>
             <Link
               to={`/category/${resolvedCategory.slug ?? 'catalog'}`}
-              className="font-sans text-xs uppercase tracking-[0.2em] text-gold hover:underline"
+              className="font-sans text-xs uppercase tracking-[0.2em] text-gold-dark dark:text-gold hover:underline"
             >
               {localizedLabels.viewAll} →
             </Link>
@@ -652,10 +652,10 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                   key={prod._id}
                   type="button"
                   onClick={() => setActiveIdx(idx)}
-                  className={`group relative flex flex-col items-center rounded-xl p-3 sm:p-4 border transition-all duration-300 ${
+                  className={`group relative flex flex-col items-center rounded-xl p-3 sm:p-4 border transition-all duration-300 cursor-pointer ${
                     active
                       ? 'border-gold bg-gold/15 scale-105 shadow-[0_0_25px_rgba(201,154,82,0.4)]'
-                      : 'border-white/10 bg-black/40 hover:border-gold/50 hover:bg-gold/5 opacity-70 hover:opacity-100'
+                      : 'border-line bg-cream-card/90 hover:border-gold/50 hover:bg-gold/5 opacity-80 hover:opacity-100 dark:border-white/10 dark:bg-black/40'
                   }`}
                 >
                   <div className="relative h-20 w-16 sm:h-24 sm:w-20 flex items-center justify-center">
@@ -678,11 +678,11 @@ export function Stage3dShowcase({ category, products }: Stage3dShowcaseProps) {
                     )}
                   </div>
 
-                  <span className={`mt-2 font-sans text-xs text-center font-medium line-clamp-1 max-w-[120px] ${active ? 'text-gold-light font-bold' : 'text-cream-card/70'}`}>
+                  <span className={`mt-2 font-sans text-xs text-center font-medium line-clamp-1 max-w-[120px] ${active ? 'text-gold-dark dark:text-gold-light font-bold' : 'text-ink/75 dark:text-cream-card/70'}`}>
                     {pName}
                   </span>
 
-                  <span className="font-mono text-[11px] text-gold/80 mt-0.5">
+                  <span className="font-mono text-[11px] text-gold-dark dark:text-gold/80 mt-0.5">
                     {formatPrice(prod.price, prod.currency)}
                   </span>
 
