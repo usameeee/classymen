@@ -69,8 +69,60 @@ function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
 
   if (!current) {
     return (
-      <div className="flex h-64 items-center justify-center text-center p-6 text-amber-300/40 font-sans text-xs">
-        {locale === 'ar' ? 'لا توجد قطع معلقة في هذا القسم' : 'No hanging garments'}
+      <div className="relative flex flex-col justify-between w-full select-none pt-1">
+        {/* Closet Rod */}
+        <div className="relative w-full h-7 flex items-center z-30">
+          <svg className="w-full h-7 overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 28">
+            <rect x="0" y="10" width="1000" height="7" fill="rgba(0,0,0,0.55)" rx="3.5" />
+            <rect x="0" y="7" width="1000" height="7" fill="url(#wardrobeBrassRodGradEmpty)" rx="3.5" />
+            <rect x="0" y="7.5" width="1000" height="1.8" fill="rgba(255,255,255,0.6)" rx="1" />
+            <rect x="0" y="2" width="12" height="17" fill="url(#wardrobeFlangeGradEmpty)" rx="2" />
+            <rect x="988" y="2" width="12" height="17" fill="url(#wardrobeFlangeGradEmpty)" rx="2" />
+            <defs>
+              <linearGradient id="wardrobeBrassRodGradEmpty" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#785928" />
+                <stop offset="25%" stopColor="#d4af37" />
+                <stop offset="50%" stopColor="#fff3bf" />
+                <stop offset="75%" stopColor="#d4af37" />
+                <stop offset="100%" stopColor="#785928" />
+              </linearGradient>
+              <linearGradient id="wardrobeFlangeGradEmpty" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffea9f" />
+                <stop offset="50%" stopColor="#d4af37" />
+                <stop offset="100%" stopColor="#5a3f18" />
+              </linearGradient>
+              <linearGradient id="hangerWoodGradEmpty" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3d2616" />
+                <stop offset="50%" stopColor="#5c3a21" />
+                <stop offset="100%" stopColor="#2a1a0f" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        {/* Empty Boutique Brass & Walnut Hangers */}
+        <div className="relative flex items-center justify-center gap-10 pt-4 pb-4 min-h-[160px] sm:min-h-[190px]">
+          <div className="flex flex-col items-center opacity-70 hover:opacity-100 transition-opacity">
+            <svg className="w-20 h-16 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.7)]" viewBox="0 0 100 60" fill="none">
+              <path d="M 50 10 C 50 2 56 0 58 5 C 60 9 55 13 50 14 L 50 24" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 50 24 L 10 48 C 8 50 12 54 15 52 L 50 32 L 85 52 C 88 54 92 50 90 48 Z" fill="url(#hangerWoodGradEmpty)" stroke="rgba(212,175,55,0.5)" strokeWidth="1" />
+              <line x1="15" y1="52" x2="85" y2="52" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </div>
+          <div className="flex flex-col items-center opacity-70 hover:opacity-100 transition-opacity">
+            <svg className="w-20 h-16 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.7)]" viewBox="0 0 100 60" fill="none">
+              <path d="M 50 10 C 50 2 56 0 58 5 C 60 9 55 13 50 14 L 50 24" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 50 24 L 10 48 C 8 50 12 54 15 52 L 50 32 L 85 52 C 88 54 92 50 90 48 Z" fill="url(#hangerWoodGradEmpty)" stroke="rgba(212,175,55,0.5)" strokeWidth="1" />
+              <line x1="15" y1="52" x2="85" y2="52" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <div className="text-center pb-2">
+          <span className="font-sans text-[11px] text-amber-400/70 font-medium">
+            {locale === 'ar' ? 'قسم الشماعات المعلقة — جاهز لتنسيق الجاكيتات والبدلات الملكية' : 'Hanging Garments Section'}
+          </span>
+        </div>
       </div>
     )
   }
@@ -306,24 +358,29 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
   const { locale } = useApp()
   const [isOpen, setIsOpen] = useState(false)
   const [activeItemId, setActiveItemId] = useState<string | null>(null)
-  const [isDetailView, setIsDetailView] = useState(false)
+  const [activeAngleIdx, setActiveAngleIdx] = useState(0)
 
   function handleProductClick(product: Product) {
     if (activeItemId === product._id) {
-      // If already active and has multiple images, toggle between hero and detail
       if (product.images.length > 1) {
-        setIsDetailView((prev) => !prev)
+        // Toggle to next angle
+        setActiveAngleIdx((prev) => (prev + 1) % product.images.length)
       } else {
         // Return back to slot
         setActiveItemId(null)
-        setIsDetailView(false)
+        setActiveAngleIdx(0)
       }
     } else {
       // Lift new item into spotlight
       setActiveItemId(product._id)
-      setIsDetailView(false)
+      setActiveAngleIdx(0)
     }
   }
+
+  // Determine complementary slots to display when fewer than 3 products are in drawer
+  const hasProducts = products.length > 0
+  const showFragranceSlot = products.length < 2
+  const showValetSlot = products.length < 3
 
   return (
     <div className="relative w-full mt-4 select-none">
@@ -339,7 +396,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
             <span className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300">
               {locale === 'ar' ? 'الدرج الكبير للأحذية والعطور' : locale === 'fr' ? 'Grand Tiroir Chaussures & Parfums' : 'Large Boutique Drawer'}
             </span>
-            {products.length > 0 && (
+            {hasProducts && (
               <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
                 {products.length} {locale === 'ar' ? 'قطع' : 'items'}
               </span>
@@ -352,7 +409,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
               setIsOpen((prev) => !prev)
               if (isOpen) {
                 setActiveItemId(null)
-                setIsDetailView(false)
+                setActiveAngleIdx(0)
               }
             }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/50 bg-amber-500/15 hover:bg-amber-500 hover:text-black font-sans text-xs font-bold text-amber-200 transition-all cursor-pointer shadow-xs active:scale-95"
@@ -398,14 +455,23 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                 animate={{ opacity: 1, height: 'auto', y: 0 }}
                 exit={{ opacity: 0, height: 0, y: -10 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                className="overflow-hidden mt-3 rounded-lg border-2 border-amber-700/60 bg-gradient-to-b from-[#19110a] via-[#0f0905] to-[#070402] p-3 sm:p-4 shadow-[0_20px_35px_rgba(0,0,0,0.95)]"
+                className="relative overflow-hidden mt-3 rounded-lg border-2 border-amber-700/60 bg-gradient-to-b from-[#18110b] via-[#0f0905] to-[#070402] p-3 sm:p-4 shadow-[0_22px_40px_rgba(0,0,0,0.95)]"
               >
-                {/* Drawer Interior Rim & Ambient Glow */}
+                {/* Metallic Side Slide Runners */}
+                <div aria-hidden="true" className="absolute inset-y-0 start-0 w-1.5 bg-gradient-to-r from-amber-600/60 via-amber-200/80 to-transparent pointer-events-none rounded-s" />
+                <div aria-hidden="true" className="absolute inset-y-0 end-0 w-1.5 bg-gradient-to-l from-amber-600/60 via-amber-200/80 to-transparent pointer-events-none rounded-e" />
+
+                {/* Interior LED Strip Warm Ambient Glow */}
+                <div aria-hidden="true" className="h-0.5 w-full bg-gradient-to-r from-transparent via-amber-300/80 to-transparent blur-[1px] mb-2" />
+
+                {/* Drawer Interior Subheader */}
                 <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-900/50">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                     <span className="font-sans text-[10px] font-semibold uppercase tracking-widest text-amber-300/90">
-                      {locale === 'ar' ? 'بطانة المخمل الفاخرة — انقر على أي قطعة لرفعها وفحصها' : 'Velvet Lined Tray — Tap any piece to lift & inspect'}
+                      {locale === 'ar'
+                        ? 'منظم الدرج الفاخر — انقر على أي قطعة لرفعها وفحص زواياها'
+                        : 'Boutique Valet Tray — Tap any piece to lift & inspect angles'}
                     </span>
                   </div>
                   <span className="font-mono text-[9px] text-amber-500/60 uppercase tracking-widest">
@@ -413,143 +479,223 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                   </span>
                 </div>
 
-                {/* Natural Recessed Velvet Compartments Row */}
-                {products.length > 0 ? (
-                  <div className="relative pt-4 pb-2">
-                    <div className="flex items-end justify-center sm:justify-start gap-4 sm:gap-6 overflow-x-auto pb-4 pt-8 px-2 scrollbar-none">
-                      {products.map((item) => {
-                        const name = pickText(item.name, locale)
-                        const isLifted = activeItemId === item._id
-                        const hasDetail = item.images.length > 1
-                        const currentImg = isLifted && isDetailView && hasDetail
-                          ? ensureTransparentUrl(item.images[1]?.url)
-                          : ensureTransparentUrl(item.images[0]?.url)
+                {/* ── Natural Centered Boutique Organizer Layout ── */}
+                <div className="relative pt-3 pb-2">
+                  <div className="flex items-end justify-center gap-3 sm:gap-5 overflow-x-auto pb-3 pt-6 px-1 scrollbar-none">
+                    {/* Render Assigned Drawer Products in Custom Velvet Compartments */}
+                    {products.map((item) => {
+                      const name = pickText(item.name, locale)
+                      const isLifted = activeItemId === item._id
+                      const hasDetail = item.images.length > 1
+                      const safeAngle = activeAngleIdx < item.images.length ? activeAngleIdx : 0
+                      const currentImg = ensureTransparentUrl(item.images[safeAngle]?.url || item.images[0]?.url)
 
-                        return (
+                      return (
+                        <div
+                          key={item._id}
+                          className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none"
+                        >
+                          {/* ── Recessed Velvet Slot Cushion (The physical compartment) ── */}
                           <div
-                            key={item._id}
-                            className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none"
+                            onClick={() => handleProductClick(item)}
+                            role="button"
+                            tabIndex={0}
+                            className={`relative w-full h-36 sm:h-40 rounded-lg border cursor-pointer transition-all duration-300 flex items-center justify-center p-2 ${
+                              isLifted
+                                ? 'border-amber-400 bg-gradient-to-b from-amber-950/50 via-[#180f08] to-black/95 shadow-[inset_0_4px_18px_rgba(0,0,0,0.95),0_0_20px_rgba(212,175,55,0.3)]'
+                                : 'border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] hover:border-amber-600/60'
+                            }`}
                           >
-                            {/* ── Recessed Velvet Slot Cushion (The physical compartment) ── */}
+                            {/* Velvet cushion perimeter stitch */}
                             <div
-                              onClick={() => handleProductClick(item)}
-                              role="button"
-                              tabIndex={0}
-                              className={`relative w-full h-36 sm:h-40 rounded-lg border cursor-pointer transition-all duration-300 flex items-center justify-center p-2 ${
-                                isLifted
-                                  ? 'border-amber-400/80 bg-gradient-to-b from-amber-950/40 to-black/90 shadow-[inset_0_4px_16px_rgba(0,0,0,0.9),0_0_15px_rgba(212,175,55,0.25)]'
-                                  : 'border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] hover:border-amber-600/60'
-                              }`}
-                            >
-                              {/* Velvet cushion indent lines */}
-                              <div
-                                aria-hidden="true"
-                                className="absolute inset-1.5 rounded border border-amber-900/20 pointer-events-none"
-                              />
+                              aria-hidden="true"
+                              className="absolute inset-1.5 rounded border border-amber-900/25 pointer-events-none"
+                            />
 
-                              {/* Soft Contact Shadow on Velvet Floor */}
-                              <div
-                                aria-hidden="true"
-                                className={`absolute bottom-3 w-20 sm:w-24 h-2.5 rounded-[50%] bg-black/95 blur-[2.5px] transition-all duration-300 pointer-events-none ${
-                                  isLifted ? 'scale-75 opacity-40' : 'scale-100 opacity-90'
-                                }`}
-                              />
-
-                              {/* ── The Product (Lifts up out of slot into spotlight when clicked!) ── */}
+                            {/* Warm Golden Spotlight on Slot Floor when Lifted */}
+                            {isLifted && (
                               <motion.div
-                                animate={
-                                  isLifted
-                                    ? { y: -26, scale: 1.16, rotate: 0 }
-                                    : { y: 0, scale: 1, rotate: 0 }
-                                }
-                                transition={{ type: 'spring', stiffness: 340, damping: 22 }}
-                                className="relative z-20 flex flex-col items-center justify-center w-full h-full"
-                              >
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="absolute inset-0 rounded-lg pointer-events-none bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.45)_0%,rgba(212,175,55,0.08)_55%,transparent_75%)]"
+                              />
+                            )}
+
+                            {/* Soft Contact Floor Shadow */}
+                            <div
+                              aria-hidden="true"
+                              className={`absolute bottom-3 w-20 sm:w-24 h-2.5 rounded-[50%] bg-black/95 blur-[2.5px] transition-all duration-300 pointer-events-none ${
+                                isLifted ? 'scale-65 opacity-35' : 'scale-100 opacity-90'
+                              }`}
+                            />
+
+                            {/* ── The Elevated Product (Smooth lift out of drawer on click!) ── */}
+                            <motion.div
+                              animate={
+                                isLifted
+                                  ? { y: -38, scale: 1.22, rotate: 0 }
+                                  : { y: 0, scale: 1, rotate: 0 }
+                              }
+                              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                              className="relative z-20 flex flex-col items-center justify-center w-full h-full"
+                            >
+                              <AnimatePresence mode="wait">
                                 {currentImg ? (
-                                  <img
+                                  <motion.img
+                                    key={`${item._id}-${safeAngle}`}
                                     src={currentImg}
                                     alt={name}
                                     loading="lazy"
+                                    initial={{ opacity: 0, rotateY: 70, scale: 0.95 }}
+                                    animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                                    exit={{ opacity: 0, rotateY: -70, scale: 0.95 }}
+                                    transition={{ duration: 0.22 }}
                                     className={`max-h-full max-w-full object-contain filter pointer-events-none transition-all duration-300 ${
                                       isLifted
-                                        ? 'drop-shadow-[0_22px_28px_rgba(0,0,0,0.95)] drop-shadow-[0_0_12px_rgba(212,175,55,0.35)]'
+                                        ? 'drop-shadow-[0_24px_30px_rgba(0,0,0,0.95)] drop-shadow-[0_0_14px_rgba(212,175,55,0.4)]'
                                         : 'drop-shadow-[0_8px_14px_rgba(0,0,0,0.85)] group-hover:scale-105'
                                     }`}
                                   />
                                 ) : (
                                   <span className="font-display text-2xl text-amber-400/40">{name.charAt(0)}</span>
                                 )}
+                              </AnimatePresence>
 
-                                {/* Floating Action Tag when Lifted */}
-                                {isLifted && (
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.8, y: 6 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    className="absolute -top-6 rounded-full border border-amber-400 bg-black/90 px-2 py-0.5 font-sans text-[9px] uppercase tracking-wider text-amber-200 shadow-md backdrop-blur-xs whitespace-nowrap"
-                                  >
-                                    {hasDetail
-                                      ? isDetailView
-                                        ? (locale === 'ar' ? 'عرض الوجه الرئيسي' : 'Hero View')
-                                        : (locale === 'ar' ? 'عرض التفصيل / الزاوية' : 'Detail View')
-                                      : (locale === 'ar' ? 'مرفوع للفحص' : 'Inspecting')}
-                                  </motion.div>
-                                )}
-                              </motion.div>
-                            </div>
-
-                            {/* Label & Price Below Slot */}
-                            <div className="mt-2 text-center w-full px-1">
-                              <span className="line-clamp-1 font-display text-xs text-amber-100 font-medium">
-                                {name}
-                              </span>
-                              <span className="font-mono text-[11px] font-bold text-amber-400 mt-0.5 block">
-                                {formatPrice(item.price, item.currency)}
-                              </span>
-                            </div>
-
-                            {/* Inspection Actions Bar when Lifted */}
-                            {isLifted && (
-                              <motion.div
-                                initial={{ opacity: 0, y: 4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="mt-1.5 flex items-center justify-center gap-2 w-full"
-                              >
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    onOpenModal(item)
-                                  }}
-                                  className="font-sans text-[10px] font-bold uppercase tracking-wider text-amber-300 hover:text-amber-100 underline underline-offset-2 cursor-pointer"
+                              {/* Multi-Angle Switcher Pill Bar when Lifted */}
+                              {isLifted && hasDetail && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: -6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="absolute -top-7 z-30 flex items-center gap-1 bg-black/95 border border-amber-400/70 rounded-full px-2 py-0.5 shadow-lg backdrop-blur-xs whitespace-nowrap"
                                 >
-                                  {locale === 'ar' ? 'تفاصيل' : 'Details'} →
-                                </button>
-                                <span className="text-amber-700 text-xs">•</span>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setActiveItemId(null)
-                                    setIsDetailView(false)
-                                  }}
-                                  className="font-sans text-[10px] font-medium text-amber-500/80 hover:text-amber-300 cursor-pointer"
-                                >
-                                  {locale === 'ar' ? 'إعادة' : 'Return'}
-                                </button>
-                              </motion.div>
-                            )}
+                                  {item.images.map((_, imgIdx) => (
+                                    <button
+                                      key={imgIdx}
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setActiveAngleIdx(imgIdx)
+                                      }}
+                                      className={`px-2 py-0.5 rounded-full text-[9px] font-sans font-bold transition-all cursor-pointer ${
+                                        safeAngle === imgIdx
+                                          ? 'bg-amber-400 text-black shadow-xs'
+                                          : 'text-amber-300/80 hover:text-amber-100'
+                                      }`}
+                                    >
+                                      {imgIdx === 0
+                                        ? (locale === 'ar' ? 'جانبي' : 'Hero')
+                                        : imgIdx === 1
+                                        ? (locale === 'ar' ? 'تفاصيل / كعب' : 'Detail')
+                                        : `${imgIdx + 1}`}
+                                    </button>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </motion.div>
                           </div>
-                        )
-                      })}
-                    </div>
+
+                          {/* Label & Price Below Slot */}
+                          <div className="mt-2 text-center w-full px-1">
+                            <span className="line-clamp-1 font-display text-xs text-amber-100 font-medium">
+                              {name}
+                            </span>
+                            <span className="font-mono text-[11px] font-bold text-amber-400 mt-0.5 block">
+                              {formatPrice(item.price, item.currency)}
+                            </span>
+                          </div>
+
+                          {/* In-Drawer Inspection Action Bar */}
+                          {isLifted && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="mt-1.5 flex items-center justify-center gap-2 w-full"
+                            >
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onOpenModal(item)
+                                }}
+                                className="font-sans text-[10px] font-bold uppercase tracking-wider text-amber-300 hover:text-amber-100 underline underline-offset-2 cursor-pointer"
+                              >
+                                {locale === 'ar' ? 'عرض التفاصيل' : 'Details'} →
+                              </button>
+                              <span className="text-amber-700 text-xs">•</span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setActiveItemId(null)
+                                  setActiveAngleIdx(0)
+                                }}
+                                className="font-sans text-[10px] font-medium text-amber-500/80 hover:text-amber-300 cursor-pointer"
+                              >
+                                {locale === 'ar' ? 'إعادة للدرج' : 'Return'}
+                              </button>
+                            </motion.div>
+                          )}
+                        </div>
+                      )
+                    })}
+
+                    {/* ── Complementary Haute Parfumerie Bay (When fewer than 2 items) ── */}
+                    {showFragranceSlot && (
+                      <div className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none opacity-85">
+                        <div className="relative w-full h-36 sm:h-40 rounded-lg border border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center p-3">
+                          <div aria-hidden="true" className="absolute inset-1.5 rounded border border-amber-900/20 pointer-events-none" />
+                          <svg className="w-9 h-14 text-amber-500/45 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]" viewBox="0 0 40 64" fill="none">
+                            <rect x="15" y="4" width="10" height="8" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                            <rect x="18" y="0" width="4" height="4" fill="currentColor" />
+                            <path d="M 8 16 C 8 13 12 12 20 12 C 28 12 32 13 32 16 L 35 56 C 35 60 31 62 20 62 C 9 62 5 60 5 56 Z" stroke="currentColor" strokeWidth="1.5" />
+                            <circle cx="20" cy="36" r="6" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
+                          </svg>
+                          <span className="font-sans text-[9px] uppercase tracking-wider text-amber-400/70 mt-2 text-center font-medium">
+                            {locale === 'ar' ? 'مقصورة العطور' : 'Haute Parfumerie'}
+                          </span>
+                          <span className="font-mono text-[8px] text-amber-500/40">Classy Atelier</span>
+                        </div>
+                        <div className="mt-2 text-center w-full px-1">
+                          <span className="font-display text-xs text-amber-200/50">
+                            {locale === 'ar' ? 'عطور النخبة' : 'Royal Fragrance'}
+                          </span>
+                          <span className="font-mono text-[10px] text-amber-600/60 block mt-0.5">
+                            Classy Valet
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ── Complementary Timepiece & Valet Vault (When fewer than 3 items) ── */}
+                    {showValetSlot && (
+                      <div className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none opacity-85">
+                        <div className="relative w-full h-36 sm:h-40 rounded-lg border border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center p-3">
+                          <div aria-hidden="true" className="absolute inset-1.5 rounded border border-amber-900/20 pointer-events-none" />
+                          <svg className="w-9 h-14 text-amber-500/45 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]" viewBox="0 0 40 64" fill="none">
+                            <path d="M 12 6 L 28 6 L 26 18 L 14 18 Z" stroke="currentColor" strokeWidth="1.5" />
+                            <circle cx="20" cy="32" r="14" stroke="currentColor" strokeWidth="1.5" />
+                            <circle cx="20" cy="32" r="10" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
+                            <line x1="20" y1="32" x2="20" y2="26" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            <line x1="20" y1="32" x2="25" y2="32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M 14 46 L 26 46 L 28 58 L 12 58 Z" stroke="currentColor" strokeWidth="1.5" />
+                          </svg>
+                          <span className="font-sans text-[9px] uppercase tracking-wider text-amber-400/70 mt-2 text-center font-medium">
+                            {locale === 'ar' ? 'ساعات وإكسسوارات' : 'Timepieces & Valet'}
+                          </span>
+                          <span className="font-mono text-[8px] text-amber-500/40">Haute Horlogerie</span>
+                        </div>
+                        <div className="mt-2 text-center w-full px-1">
+                          <span className="font-display text-xs text-amber-200/50">
+                            {locale === 'ar' ? 'صندوق الساعات' : 'Timepiece Vault'}
+                          </span>
+                          <span className="font-mono text-[10px] text-amber-600/60 block mt-0.5">
+                            Classy Valet
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="py-6 text-center text-amber-400/60 font-sans text-xs">
-                    {locale === 'ar'
-                      ? 'الدرج مفتوح وجاهز — خصص منتجات (أحذية / عطور) للقسم السفلي لتظهر هنا داخل حجيرات المخمل'
-                      : 'Drawer is open — assign bottom section products to display here in custom velvet slots'}
-                  </div>
-                )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
