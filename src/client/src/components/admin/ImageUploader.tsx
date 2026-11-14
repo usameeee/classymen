@@ -84,7 +84,8 @@ const STANDARD_SLOTS: SlotConfig[] = [
 ]
 
 /**
- * Returns the exact, dedicated photo shooting / AI generation prompt for a specific slot.
+ * Returns the exact Image-to-Image / Product Preservation AI prompt for a specific slot.
+ * Enforces keeping the user's real product while adapting only the angle, background, and scene alignment.
  */
 function getSlotPrompt(
   slotKey: string,
@@ -94,73 +95,73 @@ function getSlotPrompt(
   if (displayStyle === 'wardrobe') {
     if (wardrobeSection === 'hanging') {
       if (slotKey === 'front') {
-        return 'صورة لقطعة ملابس رجالية فاخرة معلقة على شماعة خشبية أو معدنية أنيقة، زاوية أمامية مستقيمة كاملة، إضاءة استوديو متوازنة وناعمة، خلفية بيضاء نقية معزولة تماماً بدون خلفية (PNG cut-out, isolated pure white background, studio lighting).'
+        return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً (نفس القماش، اللون، والشعار). اعرض القطعة معلقة بشكل طبيعي ومستقيم على شماعة أنيقة، واجهة أمامية كاملة، إضاءة استوديو ناعمة، عزل تام على خلفية بيضاء نقية بدون أي خلفية (Keep exact same garment from image, preserve original fabric and color, hang naturally on luxury hanger, front view, isolated pure white background, studio lighting, PNG cut-out).'
       }
       if (slotKey === 'back') {
-        return 'صورة خلفية لنفس القطعة معلقة على الشماعة، زاوية 180 درجة من الظهر، نفس الإضاءة والاستوديو، خلفية بيضاء نقية معزولة تماماً بدون خلفية (Back view 180-degree, isolated transparent/pure white background, PNG cut-out).'
+        return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً. اعرض نفس القطعة معلقة من الجهة الخلفية (ظهر القطعة بزاوية 180 درجة)، نفس الإضاءة، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, 180-degree back view on hanger, preserve same material, isolated pure white background, studio lighting, PNG cut-out).'
       }
     }
     if (wardrobeSection === 'folded') {
       if (slotKey === 'folded') {
-        return 'صورة لقطعة ملابس رجالية فاخرة مطوية بعناية فائقة ومرتبة كأنها في رف بوتيك، زاوية علوية مائلة خفيفة (35° top angle) تبرز الياقة وثنيات القماش، إضاءة استوديو ناعمة وبدون ظلال، خلفية بيضاء نقية معزولة تماماً بدون خلفية (Neatly folded luxury garment on flat shelf surface, 35-degree top angle, studio lighting, isolated transparent or pure white background, PNG cut-out).'
+        return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً (نفس القماش واللون والشعار). اعرض القطعة مطوية بعناية كأنها على رف بوتيك راقٍ، زاوية رؤية علوية مائلة 35 درجة تبرز الياقة والشعار، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, neatly fold for luxury boutique shelf, 35-degree top angle, collar/logo visible, isolated pure white background, PNG cut-out).'
       }
       if (slotKey === 'front') {
-        return 'صورة لنفس القطعة مفرودة بالكامل وممدودة الأكمام بشكل مستوٍ، زاوية رؤية علوية 90 درجة (Flat lay / top-down view)، إضاءة استوديو ناعمة، خلفية بيضاء نقية معزولة تماماً بدون خلفية (Full flat-lay open garment view, isolated pure white background, PNG cut-out).'
+        return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً. اعرض القطعة مفرودة بالكامل وممدودة الأكمام بشكل مستوٍ ومنبسط (Flat-lay)، زاوية رأسية من الأعلى 90 درجة، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, full flat-lay open garment with spread sleeves, 90-degree top-down view, isolated pure white background, PNG cut-out).'
       }
     }
     if (wardrobeSection === 'bottom') {
       if (slotKey === 'front') {
-        return 'صورة لمنتج فاخر (حذاء جلدي راقٍ أو زجاجة عطر رجالي فاخر)، زاوية رؤية أمامية مائلة 45 درجة (Hero product shot)، تفاصيل الملمس والإضاءة البراقة واضحة وواقعية، خلفية بيضاء نقية معزولة تماماً بدون خلفية (Luxury footwear / perfume hero product shot, 45-degree angle, cinematic studio lighting, isolated transparent or pure white background, PNG cut-out).'
+        return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً (نفس الموديل، اللون، والتفاصيل). اعرض المنتج من زاوية بطلة مائلة 45 درجة (Hero shot)، إضاءة استوديو سينمائية، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, 45-degree hero perspective angle, cinematic studio lighting, isolated pure white background, PNG cut-out).'
       }
       if (slotKey === 'detail') {
-        return 'صورة مقربة عالية الدقة لتفاصيل المنتج الفاخر (الملمس الجلدي، الخياطة، أو غطاء العطر والنقوش)، إضاءة ماكرو دقيقة، خلفية بيضاء نقية معزولة تماماً بدون خلفية (Close-up detail shot, macro studio lighting, isolated transparent or pure white background, PNG cut-out).'
+        return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. لقطة مقربة دقيقة (Close-up Macro) لأهم تفاصيل الخامة، الخياطة، أو الشعار، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, close-up macro detail of material/stitching/logo, isolated pure white background, PNG cut-out).'
       }
     }
   }
 
   if (displayStyle === 'rail') {
     if (slotKey === 'front') {
-      return 'صورة لقطعة ملابس رجالية معلقة على علاقة أنيقة، زاوية أمامية كاملة، إضاءة استوديو متوازنة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out, studio lighting).'
+      return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً. اعرض القطعة معلقة على شماعة بوتيك، واجهة أمامية مستقيمة كاملة، إضاءة استوديو متوازنة، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, hanging on boutique hanger, straight front view, isolated pure white background, studio lighting, PNG cut-out).'
     }
     if (slotKey === 'back') {
-      return 'صورة خلفية لنفس القطعة من الظهر 180 درجة، معلقة على العلاقة، خلفية بيضاء نقية معزولة تماماً (Back view 180-degree, PNG cut-out).'
+      return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً. اعرض ظهر القطعة المعلقة من زاوية 180 درجة، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, 180-degree back view on hanger, isolated pure white background, PNG cut-out).'
     }
   }
 
   if (displayStyle === 'stage-3d') {
     if (slotKey === 'front') {
-      return 'صورة للمنتج من زاوية أمامية مباشرة (0°)، محاذاة عمودية دقيقة، إضاءة استوديو موحدة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out, 0-degree front view).'
+      return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. واجهة أمامية مستقيمة 0 درجة بمحاذاة عمودية دقيقة، إضاءة استوديو موحدة، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, 0-degree front view, isolated pure white background, PNG cut-out).'
     }
     if (slotKey === 'angle') {
-      return 'صورة للمنتج من زاوية مائلة 45 درجة (Three-quarter angle)، نفس الارتفاع والإضاءة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out, 45-degree angle).'
+      return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. أدِر المنتج بزاوية مائلة 45 درجة (Three-quarter angle)، نفس الارتفاع والإضاءة، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, rotated 45-degree angle, isolated pure white background, PNG cut-out).'
     }
     if (slotKey === 'side') {
-      return 'صورة جانبية للمنتج بزاوية 90 درجة تماماً (Side profile)، نفس الارتفاع والإضاءة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out, 90-degree side view).'
+      return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. أدِر المنتج بزاوية جانبية 90 درجة (Side profile)، نفس الارتفاع والإضاءة، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, rotated 90-degree side profile, isolated pure white background, PNG cut-out).'
     }
     if (slotKey === 'back') {
-      return 'صورة خلفية للمنتج بزاوية 180 درجة تماماً (Back view)، نفس الارتفاع والإضاءة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out, 180-degree back view).'
+      return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. أدِر المنتج بزاوية خلفية 180 درجة (Back view)، نفس الارتفاع والإضاءة، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, rotated 180-degree back view, isolated pure white background, PNG cut-out).'
     }
   }
 
   if (displayStyle === 'mannequin') {
     if (slotKey === 'front') {
-      return 'صورة للقطعة ملبوسة على مانيكان شبحي غير مرئي (Ghost Mannequin)، واجهة أمامية مستقيمة كاملة، إضاءة استوديو هادئة، خلفية بيضاء معزولة تماماً (PNG cut-out).'
+      return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً. اعرض القطعة ملبوسة على مانيكان شبحي غير مرئي (Ghost Mannequin)، واجهة أمامية كاملة، إضاءة استوديو هادئة، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, worn on invisible ghost mannequin, front view, isolated pure white background, PNG cut-out).'
     }
     if (slotKey === 'back') {
-      return 'صورة خلفية لنفس القطعة على المانيكان، زاوية 180 درجة، خلفية بيضاء معزولة تماماً (PNG cut-out).'
+      return 'حافظ على نفس القطعة الأصلية في الصورة المرفقة تماماً. اعرض ظهر القطعة على المانيكان الشبحي بزاوية 180 درجة، عزل تام على خلفية بيضاء نقية (Keep exact same garment from image, back view on ghost mannequin, isolated pure white background, PNG cut-out).'
     }
   }
 
   if (slotKey === 'front') {
-    return 'صورة احترافية للمنتج من الأمام، إضاءة استوديو متوازنة، خلفية بيضاء نقية معزولة تماماً بدون خلفية (PNG cut-out).'
+    return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. اعرض واجهة أمامية واضحة للمنتج، إضاءة استوديو متوازنة، عزل تام على خلفية بيضاء نقية بدون أي خلفية (Keep exact same product from image, clear front view, studio lighting, isolated pure white background, PNG cut-out).'
   }
   if (slotKey === 'back') {
-    return 'صورة خلفية للمنتج، إضاءة متوازنة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out).'
+    return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. اعرض ظهر المنتج بزاوية 180 درجة، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, 180-degree back view, isolated pure white background, PNG cut-out).'
   }
   if (slotKey === 'detail') {
-    return 'صورة مقربة لتفاصيل القطعة والملمس، إضاءة ماكرو واضحة، خلفية بيضاء نقية معزولة تماماً (PNG cut-out).'
+    return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. لقطة مقربة دقيقة (Macro) لأهم تفاصيل وخامة المنتج، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, close-up macro detail of texture and finish, isolated pure white background, PNG cut-out).'
   }
-  return 'صورة احترافية للمنتج بإضاءة استوديو ناعمة وزاوية واضحة، خلفية بيضاء نقية معزولة تماماً بدون خلفية (PNG cut-out).'
+  return 'حافظ على نفس المنتج الأصلي في الصورة المرفقة تماماً. إضاءة استوديو ناعمة وزاوية واضحة، عزل تام على خلفية بيضاء نقية (Keep exact same product from image, studio lighting, isolated pure white background, PNG cut-out).'
 }
 
 interface ImageUploaderProps {
@@ -252,7 +253,7 @@ export function ImageUploader({
 
   return (
     <div className="space-y-3">
-      {/* ── Header bar (NO EMOJIS) ── */}
+      {/* ── Header bar ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-line/60">
         <div>
           <div className="flex items-center gap-2">
@@ -286,7 +287,7 @@ export function ImageUploader({
         </div>
       </div>
 
-      {/* ── Angle Slots Grid (Each slot has its own dedicated prompt & copy button) ── */}
+      {/* ── Angle Slots Grid (Each slot has dedicated Image-to-Image prompt & copy button) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {slots.map((slot, index) => {
           const image = value[index]?.url ? value[index] : null
@@ -388,23 +389,20 @@ export function ImageUploader({
                 )}
               </div>
 
-              {/* ── Slot Dedicated Prompt Bar & Copy Button (NO EMOJIS) ── */}
-              <div className="border-t border-line/50 p-2 bg-cream-card/60 flex flex-col gap-1.5">
-                <p
-                  className="font-sans text-[10px] leading-relaxed text-ink/80 line-clamp-2 text-start select-text"
-                  title={slotPrompt}
-                >
-                  {slotPrompt}
-                </p>
-                <div className="flex items-center justify-between gap-1 pt-0.5 border-t border-line/30">
-                  <span className="font-mono text-[9px] text-ink/50 uppercase tracking-widest">
-                    {slot.key}
+              {/* ── Slot Dedicated Prompt Bar & Copy Button (Image-to-Image / Product Preservation) ── */}
+              <div className="border-t border-line/50 p-2.5 bg-cream-card/60 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between gap-1 pb-1 border-b border-line/30">
+                  <span className="font-sans text-[10px] font-bold text-gold-dark dark:text-gold flex items-center gap-1">
+                    <svg className="w-3 h-3 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>{locale === 'ar' ? 'برومبت تعديل الصورة (Image-to-Image)' : 'Image-to-Image Prompt'}</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => handleCopySlotPrompt(index, slotPrompt)}
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-gold/50 bg-gold/15 hover:bg-gold hover:text-black font-sans text-[10px] font-semibold text-gold-dark transition-all cursor-pointer shadow-2xs active:scale-95"
-                    title={locale === 'ar' ? 'نسخ برومبت هذه الصورة' : 'Copy Slot Prompt'}
+                    title={locale === 'ar' ? 'نسخ برومبت تعديل هذا الموضع' : 'Copy Prompt'}
                   >
                     {isCopied ? (
                       <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -422,6 +420,12 @@ export function ImageUploader({
                     </span>
                   </button>
                 </div>
+                <p
+                  className="font-sans text-[10px] leading-relaxed text-ink/80 line-clamp-3 text-start select-text"
+                  title={slotPrompt}
+                >
+                  {slotPrompt}
+                </p>
               </div>
             </div>
           )
