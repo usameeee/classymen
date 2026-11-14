@@ -294,6 +294,8 @@ function HangingBay({ products, onOpen, isRtl }: HangingBayProps) {
 
 // ─────────────────────────────────────────────────────────────
 // 2. LEFT BAY BOTTOM: SINGLE LARGE OPENABLE DRAWER ("tek buyuk cekmece")
+//    Natural luxury drawer interior with recessed velvet compartments.
+//    Interactive lift & spotlight inspection on click!
 // ─────────────────────────────────────────────────────────────
 interface SingleLargeDrawerProps {
   products: Product[]
@@ -303,20 +305,39 @@ interface SingleLargeDrawerProps {
 function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
   const { locale } = useApp()
   const [isOpen, setIsOpen] = useState(false)
+  const [activeItemId, setActiveItemId] = useState<string | null>(null)
+  const [isDetailView, setIsDetailView] = useState(false)
+
+  function handleProductClick(product: Product) {
+    if (activeItemId === product._id) {
+      // If already active and has multiple images, toggle between hero and detail
+      if (product.images.length > 1) {
+        setIsDetailView((prev) => !prev)
+      } else {
+        // Return back to slot
+        setActiveItemId(null)
+        setIsDetailView(false)
+      }
+    } else {
+      // Lift new item into spotlight
+      setActiveItemId(product._id)
+      setIsDetailView(false)
+    }
+  }
 
   return (
     <div className="relative w-full mt-4 select-none">
-      {/* Top Wood/Marble Edge of Drawer Bench */}
+      {/* ── Top Wood/Marble Edge of Drawer Bench ── */}
       <div className="h-1.5 w-full bg-gradient-to-r from-amber-700/40 via-amber-400/80 to-amber-700/40 shadow-xs" />
 
-      {/* Single Large Drawer Box */}
-      <div className="rounded-b-lg border border-amber-900/60 bg-gradient-to-b from-[#241910] via-[#1a110a] to-[#120b06] p-3.5 shadow-xl">
-        {/* Header Bar with Status and Open/Close Button */}
+      {/* ── Single Large Drawer Box Frame ── */}
+      <div className="rounded-b-lg border border-amber-900/60 bg-gradient-to-b from-[#241910] via-[#1a110a] to-[#120b06] p-3 sm:p-4 shadow-xl">
+        {/* Header Bar with Status and Open/Close Toggle */}
         <div className="flex items-center justify-between pb-2.5 border-b border-amber-900/40">
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
             <span className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300">
-              {locale === 'ar' ? 'الدرج الكبير للأحذية والعطور' : locale === 'fr' ? 'Grand Tiroir Principal' : 'Large Boutique Drawer'}
+              {locale === 'ar' ? 'الدرج الكبير للأحذية والعطور' : locale === 'fr' ? 'Grand Tiroir Chaussures & Parfums' : 'Large Boutique Drawer'}
             </span>
             {products.length > 0 && (
               <span className="font-mono text-[9px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
@@ -327,7 +348,13 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
 
           <button
             type="button"
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={() => {
+              setIsOpen((prev) => !prev)
+              if (isOpen) {
+                setActiveItemId(null)
+                setIsDetailView(false)
+              }
+            }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/50 bg-amber-500/15 hover:bg-amber-500 hover:text-black font-sans text-xs font-bold text-amber-200 transition-all cursor-pointer shadow-xs active:scale-95"
           >
             <svg
@@ -347,7 +374,7 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
           </button>
         </div>
 
-        {/* The Single Large Drawer Front */}
+        {/* ── Closed Drawer Front Facade ── */}
         <div className="mt-3">
           <div
             onClick={() => setIsOpen((prev) => !prev)}
@@ -358,13 +385,12 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
             {/* Elegant Long Brass Horizontal Groove Handle */}
             <div className="w-44 sm:w-56 h-2 rounded-full bg-gradient-to-r from-amber-700 via-amber-300 to-amber-700 shadow-xs group-hover:via-amber-200 transition-colors" />
 
-            {/* Subtle Label on handle */}
             <span className="absolute bottom-1.5 font-mono text-[9px] text-amber-500/50 tracking-widest uppercase">
               {isOpen ? (locale === 'ar' ? 'مفتوح' : 'OPEN') : (locale === 'ar' ? 'اسحب لفتح الدرج' : 'PULL TO OPEN')}
             </span>
           </div>
 
-          {/* Pulled-Out Velvet Tray (Smooth Slide Reveal) */}
+          {/* ── Pulled-Out Luxury Velvet Drawer Tray (Authentic 3D Depth) ── */}
           <AnimatePresence>
             {isOpen && (
               <motion.div
@@ -372,57 +398,156 @@ function SingleLargeDrawer({ products, onOpenModal }: SingleLargeDrawerProps) {
                 animate={{ opacity: 1, height: 'auto', y: 0 }}
                 exit={{ opacity: 0, height: 0, y: -10 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                className="overflow-hidden mt-2.5 rounded-lg border border-amber-700/60 bg-gradient-to-b from-[#18110a] via-[#100a06] to-[#0a0604] p-3.5 shadow-2xl"
+                className="overflow-hidden mt-3 rounded-lg border-2 border-amber-700/60 bg-gradient-to-b from-[#19110a] via-[#0f0905] to-[#070402] p-3 sm:p-4 shadow-[0_20px_35px_rgba(0,0,0,0.95)]"
               >
-                {/* Velvet Interior Header */}
-                <div className="flex items-center justify-between pb-2 border-b border-amber-900/50">
-                  <span className="font-sans text-[10px] uppercase tracking-widest text-amber-400/80">
-                    {locale === 'ar' ? 'داخل الدرج — المنتجات مرتبة بشكل مستوٍ' : 'Inside Drawer — Products Laid Flat'}
+                {/* Drawer Interior Rim & Ambient Glow */}
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-900/50">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    <span className="font-sans text-[10px] font-semibold uppercase tracking-widest text-amber-300/90">
+                      {locale === 'ar' ? 'بطانة المخمل الفاخرة — انقر على أي قطعة لرفعها وفحصها' : 'Velvet Lined Tray — Tap any piece to lift & inspect'}
+                    </span>
+                  </div>
+                  <span className="font-mono text-[9px] text-amber-500/60 uppercase tracking-widest">
+                    Atelier Organizer
                   </span>
-                  <span className="font-mono text-[9px] text-amber-500/60 uppercase">Velvet Atelier Lining</span>
                 </div>
 
-                {/* Products laid out flat in a neat row ("urunler duz bir sekilde dizilir") */}
+                {/* Natural Recessed Velvet Compartments Row */}
                 {products.length > 0 ? (
-                  <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto py-3 px-1 scrollbar-none">
-                    {products.map((item) => {
-                      const name = pickText(item.name, locale)
-                      const img = ensureTransparentUrl(item.images[0]?.url)
+                  <div className="relative pt-4 pb-2">
+                    <div className="flex items-end justify-center sm:justify-start gap-4 sm:gap-6 overflow-x-auto pb-4 pt-8 px-2 scrollbar-none">
+                      {products.map((item) => {
+                        const name = pickText(item.name, locale)
+                        const isLifted = activeItemId === item._id
+                        const hasDetail = item.images.length > 1
+                        const currentImg = isLifted && isDetailView && hasDetail
+                          ? ensureTransparentUrl(item.images[1]?.url)
+                          : ensureTransparentUrl(item.images[0]?.url)
 
-                      return (
-                        <motion.div
-                          key={item._id}
-                          whileHover={{ y: -4, scale: 1.04 }}
-                          onClick={() => onOpenModal(item)}
-                          className="group flex-none flex flex-col items-center gap-1.5 w-28 sm:w-32 cursor-pointer text-center select-none"
-                        >
-                          <div className="relative w-full aspect-square flex items-center justify-center p-2 rounded-md border border-amber-800/40 bg-black/40 group-hover:border-amber-400/60 transition-colors">
-                            {img ? (
-                              <img
-                                src={img}
-                                alt={name}
-                                loading="lazy"
-                                className="max-h-full max-w-full object-contain filter drop-shadow-[0_10px_14px_rgba(0,0,0,0.8)] pointer-events-none"
+                        return (
+                          <div
+                            key={item._id}
+                            className="relative flex-none flex flex-col items-center w-32 sm:w-36 select-none"
+                          >
+                            {/* ── Recessed Velvet Slot Cushion (The physical compartment) ── */}
+                            <div
+                              onClick={() => handleProductClick(item)}
+                              role="button"
+                              tabIndex={0}
+                              className={`relative w-full h-36 sm:h-40 rounded-lg border cursor-pointer transition-all duration-300 flex items-center justify-center p-2 ${
+                                isLifted
+                                  ? 'border-amber-400/80 bg-gradient-to-b from-amber-950/40 to-black/90 shadow-[inset_0_4px_16px_rgba(0,0,0,0.9),0_0_15px_rgba(212,175,55,0.25)]'
+                                  : 'border-amber-900/40 bg-gradient-to-b from-[#140d08] via-[#0c0805] to-[#060402] shadow-[inset_0_4px_14px_rgba(0,0,0,0.9)] hover:border-amber-600/60'
+                              }`}
+                            >
+                              {/* Velvet cushion indent lines */}
+                              <div
+                                aria-hidden="true"
+                                className="absolute inset-1.5 rounded border border-amber-900/20 pointer-events-none"
                               />
-                            ) : (
-                              <span className="font-display text-xl text-amber-400/40">{name.charAt(0)}</span>
+
+                              {/* Soft Contact Shadow on Velvet Floor */}
+                              <div
+                                aria-hidden="true"
+                                className={`absolute bottom-3 w-20 sm:w-24 h-2.5 rounded-[50%] bg-black/95 blur-[2.5px] transition-all duration-300 pointer-events-none ${
+                                  isLifted ? 'scale-75 opacity-40' : 'scale-100 opacity-90'
+                                }`}
+                              />
+
+                              {/* ── The Product (Lifts up out of slot into spotlight when clicked!) ── */}
+                              <motion.div
+                                animate={
+                                  isLifted
+                                    ? { y: -26, scale: 1.16, rotate: 0 }
+                                    : { y: 0, scale: 1, rotate: 0 }
+                                }
+                                transition={{ type: 'spring', stiffness: 340, damping: 22 }}
+                                className="relative z-20 flex flex-col items-center justify-center w-full h-full"
+                              >
+                                {currentImg ? (
+                                  <img
+                                    src={currentImg}
+                                    alt={name}
+                                    loading="lazy"
+                                    className={`max-h-full max-w-full object-contain filter pointer-events-none transition-all duration-300 ${
+                                      isLifted
+                                        ? 'drop-shadow-[0_22px_28px_rgba(0,0,0,0.95)] drop-shadow-[0_0_12px_rgba(212,175,55,0.35)]'
+                                        : 'drop-shadow-[0_8px_14px_rgba(0,0,0,0.85)] group-hover:scale-105'
+                                    }`}
+                                  />
+                                ) : (
+                                  <span className="font-display text-2xl text-amber-400/40">{name.charAt(0)}</span>
+                                )}
+
+                                {/* Floating Action Tag when Lifted */}
+                                {isLifted && (
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.8, y: 6 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    className="absolute -top-6 rounded-full border border-amber-400 bg-black/90 px-2 py-0.5 font-sans text-[9px] uppercase tracking-wider text-amber-200 shadow-md backdrop-blur-xs whitespace-nowrap"
+                                  >
+                                    {hasDetail
+                                      ? isDetailView
+                                        ? (locale === 'ar' ? 'عرض الوجه الرئيسي' : 'Hero View')
+                                        : (locale === 'ar' ? 'عرض التفصيل / الزاوية' : 'Detail View')
+                                      : (locale === 'ar' ? 'مرفوع للفحص' : 'Inspecting')}
+                                  </motion.div>
+                                )}
+                              </motion.div>
+                            </div>
+
+                            {/* Label & Price Below Slot */}
+                            <div className="mt-2 text-center w-full px-1">
+                              <span className="line-clamp-1 font-display text-xs text-amber-100 font-medium">
+                                {name}
+                              </span>
+                              <span className="font-mono text-[11px] font-bold text-amber-400 mt-0.5 block">
+                                {formatPrice(item.price, item.currency)}
+                              </span>
+                            </div>
+
+                            {/* Inspection Actions Bar when Lifted */}
+                            {isLifted && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mt-1.5 flex items-center justify-center gap-2 w-full"
+                              >
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    onOpenModal(item)
+                                  }}
+                                  className="font-sans text-[10px] font-bold uppercase tracking-wider text-amber-300 hover:text-amber-100 underline underline-offset-2 cursor-pointer"
+                                >
+                                  {locale === 'ar' ? 'تفاصيل' : 'Details'} →
+                                </button>
+                                <span className="text-amber-700 text-xs">•</span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setActiveItemId(null)
+                                    setIsDetailView(false)
+                                  }}
+                                  className="font-sans text-[10px] font-medium text-amber-500/80 hover:text-amber-300 cursor-pointer"
+                                >
+                                  {locale === 'ar' ? 'إعادة' : 'Return'}
+                                </button>
+                              </motion.div>
                             )}
                           </div>
-                          <span className="line-clamp-1 font-display text-[11px] text-amber-100 group-hover:text-amber-300 transition-colors">
-                            {name}
-                          </span>
-                          <span className="font-mono text-[10px] font-bold text-amber-400">
-                            {formatPrice(item.price, item.currency)}
-                          </span>
-                        </motion.div>
-                      )
-                    })}
+                        )
+                      })}
+                    </div>
                   </div>
                 ) : (
-                  <div className="py-5 text-center text-amber-400/60 font-sans text-xs">
+                  <div className="py-6 text-center text-amber-400/60 font-sans text-xs">
                     {locale === 'ar'
-                      ? 'الدرج مفتوح — خصص منتجات (أحذية / عطور) للقسم السفلي لتظهر هنا'
-                      : 'Drawer is open — assign bottom section products to display here'}
+                      ? 'الدرج مفتوح وجاهز — خصص منتجات (أحذية / عطور) للقسم السفلي لتظهر هنا داخل حجيرات المخمل'
+                      : 'Drawer is open — assign bottom section products to display here in custom velvet slots'}
                   </div>
                 )}
               </motion.div>
